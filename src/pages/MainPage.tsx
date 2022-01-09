@@ -4,7 +4,6 @@ import { RouteComponentProps } from 'react-router'
 import { Route } from 'react-router-dom'
 import { BridgePaperWrapper, BridgePurePaper, } from '../components/layout/Paper'
 import { storageKeys } from '../constants/constants'
-import { useExchangeRates, useGasPrices, } from '../features/marketData/marketDataHooks'
 import { MintFlow } from '../features/mint/MintFlow'
 import { ReleaseFlow } from '../features/release/ReleaseFlow'
 import { $ui } from '../features/ui/uiSlice'
@@ -22,8 +21,8 @@ const MainPage: FunctionComponent<RouteComponentProps> = ({
   if (location.pathname === "/") {
     history.replace(paths.MINT);
   }
-  useExchangeRates();
-  useGasPrices();
+  //useExchangeRates();
+  //useGasPrices(); TODODO
   const { paperShaking } = useSelector($ui);
   return (
     <>

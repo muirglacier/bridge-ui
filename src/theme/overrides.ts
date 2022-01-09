@@ -159,7 +159,6 @@ export const overrides = (palette: Palette): Overrides => {
       },
       outlined: {
         background: "white",
-        boxShadow: `0 0 3px 0 rgba(0,27,58,0.10)`,
       },
     },
     MuiSnackbar: {
@@ -184,6 +183,7 @@ export const overrides = (palette: Palette): Overrides => {
     },
     MuiTab: {
       root: {
+        paddingTop: "20px",
         fontSize: 16,
       },
       textColorInherit: {
@@ -191,7 +191,7 @@ export const overrides = (palette: Palette): Overrides => {
         opacity: 1,
         "&$selected": {
           color: textDark,
-          fontWeight: 500,
+          fontWeight: 600,
         },
         "&$disabled": {
           color: textDisabled,

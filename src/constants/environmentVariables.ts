@@ -1,7 +1,7 @@
-const NETWORK = process.env.REACT_APP_NETWORK || "testnet";
+const NETWORK = process.env.REACT_APP_NETWORK || "mainnet";
 const INFURA_ID = process.env.REACT_APP_INFURA_ID || "";
 const BANDCHAIN_ENDPOINT =
-  process.env.REACT_APP_BANDCHAIN_ENDPOINT || "https://poa-api.bandchain.org";
+  process.env.REACT_APP_BANDCHAIN_ENDPOINT || "https://laozi1.bandchain.org/api";
 const GAS_FEE_ENDPOINT =
   process.env.REACT_APP_GAS_FEE_ENDPOINT ||
   "https://api.anyblock.tools/ethereum/latest-minimum-gasprice/?pretty";
@@ -9,9 +9,9 @@ const FIREBASE_KEY = process.env.REACT_APP_FIREBASE_KEY || null;
 const FIREBASE_PROJECT_ID =
   process.env.REACT_APP_FIREBASE_PROJECT_ID || "ren-auth";
 
-const DEV = Boolean(process.env.NODE_ENV === "development");
+export const DEV = Boolean(false);// Boolean(process.env.NODE_ENV === "development");
 
-const XSTATE_DEVTOOLS = Boolean(process.env.REACT_APP_XSTATE_DEVTOOLS || DEV);
+const XSTATE_DEVTOOLS = Boolean(false); //(process.env.REACT_APP_XSTATE_DEVTOOLS || DEV);
 
 const MEWCONNECT_ENABLED = Boolean(process.env.REACT_APP_MEWCONNECT_ENABLED);
 const WALLETCONNECT_ENABLED = Boolean(

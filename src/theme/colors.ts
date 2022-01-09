@@ -3,8 +3,8 @@ export const skyBlueLight = "#DAEBFF";
 export const skyBlue = "#C1DEFF";
 
 export const blueLight = "#0073E5";
-export const blue = "#006FE8";
-export const blueDark = "#0064CF";
+export const blue = "#ff04b0";
+export const blueDark = "#d50292";
 // export const blueDark = "#0051A8";
 
 export const graphiteLight = "#001C3A";

@@ -208,7 +208,6 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const handleRestart = useCallback(() => {
     dispatch(
       resetMint({
-        amount: activeAmount,
         currency: feeCurrency,
       })
     );

@@ -36,8 +36,7 @@ import { WalletConnectionProgress } from '../../../components/wallet/WalletHelpe
 import { paths } from '../../../pages/routes'
 import { usePageTitle, usePaperTitle } from '../../../providers/TitleProviders'
 import { getChainConfigByRentxName } from '../../../utils/assetConfigs'
-import { $exchangeRates } from '../../marketData/marketDataSlice'
-import { findExchangeRate } from '../../marketData/marketDataUtils'
+
 import {
   BrowserNotificationButton,
   BrowserNotificationsDrawer,
@@ -84,7 +83,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
   const { status } = useSelectedChainWallet();
   const walletConnected = status === WalletStatus.CONNECTED;
   const chain = useSelector($chain);
-  const rates = useSelector($exchangeRates);
   const [reloading, setReloading] = useState(false);
   const { tx: parsedTx, txState } = useTxParam();
   const [tx, setTx] = useState<GatewaySession>(parsedTx as GatewaySession); // TODO Partial<GatewaySession>
@@ -147,12 +145,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
     burnChainConfig,
     releaseCurrencyConfig,
   } = getBurnAndReleaseParams(tx);
-  const amount = Number(tx.targetAmount);
-  const releaseCurrencyUsdRate = findExchangeRate(
-    rates,
-    releaseCurrencyConfig.symbol
-  );
-  const amountUsd = amount * releaseCurrencyUsdRate;
+  
 
   return (
     <>
@@ -203,13 +196,13 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
               label="Releasing"
               value={
                 <NumberFormatText
-                  value={amount}
+                  value={0}
                   spacedSuffix={burnCurrencyConfig.short}
                 />
               }
               valueEquivalent={
                 <NumberFormatText
-                  value={amountUsd}
+                  value={0}
                   prefix="$"
                   decimalScale={2}
                   fixedDecimalScale
@@ -228,7 +221,7 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
             <SpacedDivider />
             <TransactionFees
               chain={chain}
-              amount={amount}
+              amount={0}
               currency={burnCurrencyConfig.symbol}
               type={TxType.BURN}
             />

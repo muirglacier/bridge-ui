@@ -33,7 +33,6 @@ export const preValidateReleaseTransaction = (tx: GatewaySession) => {
 };
 
 type CreateReleaseTransactionParams = {
-  amount: number;
   currency: BridgeCurrency;
   userAddress: string;
   destAddress: string;
@@ -42,7 +41,6 @@ type CreateReleaseTransactionParams = {
 };
 
 export const createReleaseTransaction = ({
-  amount,
   currency,
   userAddress,
   destAddress,
@@ -59,7 +57,7 @@ export const createReleaseTransaction = ({
     sourceChain: sourceChain, // TODO: pass sourceChain explicitly
     destAddress,
     destChain: getChainRentxName(sourceCurrencyConfig.sourceChain),
-    targetAmount: Number(amount),
+    targetAmount: 0,
     userAddress,
     expiryTime: new Date().getTime() + 1000 * 60 * 60 * 24,
     transactions: {},

@@ -130,15 +130,6 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
           <header className={styles.grow}>
             <AppBar position="static" color="transparent">
               <Toolbar>
-                <div className={styles.logo}>
-                  <Link to="/">
-                    <RenBridgeLogoIcon />
-                  </Link>
-                  <BetaIcon className={styles.beta} />
-                </div>
-                <Link to="/">
-                  <HomeMenuIconButton />
-                </Link>
                 <div className={styles.grow} />
                 {ToolbarMenu}
               </Toolbar>

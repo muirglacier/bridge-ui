@@ -52,9 +52,7 @@ import {
 import { getAssetBalance, useFetchBalances } from "../../wallet/walletUtils";
 import {
   $release,
-  $releaseUsdAmount,
   setReleaseAddress,
-  setReleaseAmount,
   setReleaseCurrency,
 } from "../releaseSlice";
 
@@ -65,18 +63,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const { walletConnected } = useSelectedChainWallet();
   const { chain, balances } = useSelector($wallet);
   const network = useSelector($renNetwork);
-  const { currency, amount, address } = useSelector($release);
+  const { currency, address } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
   useRenNetworkTracker(currency);
   useFetchBalances(supportedReleaseCurrencies);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
-  const { conversionTotal } = getTransactionFees({
-    amount,
-    type: TxType.BURN,
-    fees,
-  });
+ 
 
-  const usdAmount = useSelector($releaseUsdAmount);
   const handleChainChange = useCallback(
     (event) => {
       dispatch(setChain(event.target.value));
@@ -89,12 +82,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     },
     [dispatch]
   );
-  const handleAmountChange = useCallback(
-    (value) => {
-      dispatch(setReleaseAmount(value));
-    },
-    [dispatch]
-  );
+ 
   const handleAddressChange = useCallback(
     (event) => {
       dispatch(setReleaseAddress(event.target.value));
@@ -102,11 +90,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     [dispatch]
   );
 
-  const handleSetMaxBalance = useCallback(() => {
-    if (!!balance) {
-      dispatch(setReleaseAmount(balance));
-    }
-  }, [dispatch, balance]);
+  
 
   const targetCurrency = toReleasedCurrency(currency);
   const currencyConfig = getCurrencyConfig(currency);
@@ -127,19 +111,12 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   }, [releaseChainConfig.rentxName, network]);
 
   const isAddressValid = validateAddress(address);
-  const hasDefinedAmount = amount && amount > 0;
-  const hasMinimalAmount = isMinimalAmount(
-    amount,
-    conversionTotal,
-    TxType.BURN
-  );
+  
   const basicCondition =
-    hasDefinedAmount &&
     address &&
     isAddressValid &&
-    hasMinimalAmount &&
     !pending;
-  const hasBalance = balance !== null && amount <= Number(balance);
+  const hasBalance = balance !== null;
   let enabled;
   if (walletConnected) {
     enabled = basicCondition && hasBalance;
@@ -147,7 +124,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     enabled = basicCondition;
   }
   const showMinimalAmountError =
-    walletConnected && hasDefinedAmount && !hasMinimalAmount && !pending;
+    walletConnected && !pending;
 
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {
@@ -160,38 +137,6 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   return (
     <>
       <PaperContent>
-        <BigCurrencyInputWrapper>
-          <BigCurrencyInput
-            onChange={handleAmountChange}
-            symbol={currencyConfig.short}
-            usdValue={usdAmount}
-            value={amount}
-            errorText={
-              showMinimalAmountError ? (
-                <span>
-                  Amount too low{" "}
-                  <TooltipWithIcon title="After fees have been applied, the amount you will receive is too little." />
-                </span>
-              ) : (
-                ""
-              )
-            }
-          />
-        </BigCurrencyInputWrapper>
-        <Fade in={walletConnected}>
-          <LabelWithValue
-            label={`${currencyConfig.short} Balance`}
-            value={
-              <>
-                {balance !== null && walletConnected && (
-                  <Link onClick={handleSetMaxBalance} color="primary">
-                    {balance}
-                  </Link>
-                )}
-              </>
-            }
-          />
-        </Fade>
         <AssetDropdownWrapper>
           <AssetDropdown
             label="Chain"
@@ -227,16 +172,9 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
           (pending ? (
             <CenteredProgress />
           ) : (
-            <AssetInfo
-              label="Receiving:"
-              value={
-                <NumberFormatText
-                  value={conversionTotal}
-                  spacedSuffix={releaseCurrencyConfig.short}
-                />
-              }
-              Icon={<MainIcon fontSize="inherit" />}
-            />
+            <LabelWithValue
+            label={"FUCKY FUCKI"}
+            value={0}/>
           ))}
         <ActionButtonWrapper>
           <ActionButton

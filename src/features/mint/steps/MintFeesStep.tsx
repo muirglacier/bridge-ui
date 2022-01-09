@@ -37,6 +37,7 @@ import {
   BigAssetAmount,
   BigAssetAmountWrapper,
   LabelWithValue,
+  Label,
   MiddleEllipsisText,
   SpacedDivider,
 } from "../../../components/typography/TypographyHelpers";
@@ -51,8 +52,7 @@ import {
 } from "../../../utils/assetConfigs";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
-import { $exchangeRates } from "../../marketData/marketDataSlice";
-import { findExchangeRate } from "../../marketData/marketDataUtils";
+
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
@@ -90,28 +90,19 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const history = useHistory();
   const { status, walletConnected, account } = useSelectedChainWallet();
   const [mintingInitialized, setMintingInitialized] = useState(false);
-  const { amount, currency } = useSelector($mint);
+  const { currency } = useSelector($mint);
   const {
     chain,
     signatures: { signature },
   } = useSelector($wallet);
   const network = useSelector($renNetwork);
   const currentSessionCount = useSelector($currentSessionCount);
-  const exchangeRates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.MINT);
-  const currencyUsdRate = findExchangeRate(exchangeRates, currency);
 
-  const amountUsd = amount * currencyUsdRate;
-  const { conversionTotal } = getTransactionFees({
-    amount,
-    fees,
-    type: TxType.MINT,
-  });
-
+  
   const lockCurrencyConfig = getCurrencyConfig(currency);
   const { GreyIcon } = lockCurrencyConfig;
 
-  const targetCurrencyAmountUsd = conversionTotal * currencyUsdRate;
   const destinationChainConfig = getChainConfig(chain);
   const destinationChainNativeCurrencyConfig = getCurrencyConfig(
     destinationChainConfig.nativeCurrency
@@ -136,7 +127,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const tx = useMemo(
     () =>
       createMintTransaction({
-        amount: amount,
         currency: currency,
         destAddress: account,
         mintedCurrency: toMintedCurrency(currency),
@@ -145,7 +135,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         network: network,
         dayIndex: currentSessionCount,
       }),
-    [amount, currency, account, chain, network, currentSessionCount]
+    [currency, account, chain, network, currentSessionCount]
   );
   const txValid = preValidateMintTransaction(tx);
   const canInitializeMinting = ackChecked && txValid;
@@ -168,6 +158,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const onMintTxCreated = useCallback(
     async (tx) => {
       const dbTx = { ...tx };
+      console.log(dbTx)
       await db.addTx(dbTx, account, signature);
 
       dispatch(setCurrentTxId(tx.id));
@@ -209,27 +200,13 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <PaperActions />
       </PaperHeader>
       <PaperContent bottomPadding>
-        <BigAssetAmountWrapper>
-          <BigAssetAmount
-            value={<NumberFormatText value={amount} spacedSuffix={currency} />}
-          />
-        </BigAssetAmountWrapper>
         <Typography variant="body1" gutterBottom>
           Details
         </Typography>
-        <LabelWithValue
+        <Label
           label="Sending"
           labelTooltip={mintTooltips.sending}
-          value={<NumberFormatText value={amount} spacedSuffix={currency} />}
-          valueEquivalent={
-            <NumberFormatText
-              value={amountUsd}
-              spacedSuffix="USD"
-              decimalScale={2}
-              fixedDecimalScale
-            />
-          }
-        />
+          strvalue={currency + " on " + getCurrencyConfig(currency).full}/>
         <LabelWithValue
           label="To"
           labelTooltip={mintTooltips.to}
@@ -248,37 +225,13 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         </Typography>
         <TransactionFees
           chain={chain}
-          amount={amount}
+          amount={0}
           currency={currency}
           type={TxType.MINT}
         />
       </PaperContent>
       <Divider />
       <PaperContent darker topPadding bottomPadding>
-        {walletConnected &&
-          (pending ? (
-            <CenteredProgress />
-          ) : (
-            <AssetInfo
-              label="Receiving"
-              value={
-                <NumberFormatText
-                  value={conversionTotal}
-                  spacedSuffix={mintedCurrencyConfig.short}
-                />
-              }
-              valueEquivalent={
-                <NumberFormatText
-                  prefix=" = $"
-                  value={targetCurrencyAmountUsd}
-                  spacedSuffix="USD"
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              }
-              Icon={<GreyIcon fontSize="inherit" />}
-            />
-          ))}
         <CheckboxWrapper>
           <FormControl error={showAckError}>
             <FormControlLabel

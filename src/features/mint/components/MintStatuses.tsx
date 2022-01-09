@@ -70,26 +70,7 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
   const { showNotification, closeNotification } = useNotifications();
   const [timeRemained] = useState(getRemainingGatewayTime(tx.expiryTime));
 
-  useEffect(() => {
-    let key = 0;
-    if (timeRemained > 0) {
-      key = showNotification(
-        <AddressValidityMessage
-          milliseconds={timeRemained}
-          destNetwork={getChainConfigByRentxName(tx.destChain).full}
-        />,
-        {
-          variant: "warning",
-          persist: true,
-        }
-      ) as number;
-    }
-    return () => {
-      if (key) {
-        closeNotification(key);
-      }
-    };
-  }, [showNotification, tx.destChain, closeNotification, timeRemained]);
+
 
   const {
     lockCurrencyConfig,
@@ -157,14 +138,6 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
             minutes
           </Typography>
         )}
-        <Typography variant="caption">
-          {timeRemained > 0 && (
-            <span>
-              Expires in: <HMSCountdown milliseconds={timeRemained} />
-            </span>
-          )}
-          {timeRemained <= 0 && <span>Expired</span>}
-        </Typography>
         <Box mt={2}>
           <QrCodeIconButton onClick={toggleQr} />
         </Box>

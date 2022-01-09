@@ -142,7 +142,6 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     dispatch(
       resetMint({
         currency: lockCurrencyConfig.symbol,
-        amount: suggestedAmount,
       })
     );
     dispatch(setChain(mintChainConfig.symbol));

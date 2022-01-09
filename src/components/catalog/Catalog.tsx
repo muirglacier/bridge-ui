@@ -74,8 +74,8 @@ export const Catalog: FunctionComponent = () => {
               indicatorColor="primary"
               variant="fullWidth"
             >
-              <Tab label={tab === TabPhase.MINT ? "Minting" : "Mint"} />
-              <Tab label={tab === TabPhase.RELEASE ? "Releasing" : "Release"} />
+              <Tab label={"Escape Defichain"} />
+              <Tab label={"Send To Defichain"} />
             </Tabs>
             <PaperContent bottomPadding>
               {tab === TabPhase.MINT && (
@@ -84,7 +84,7 @@ export const Catalog: FunctionComponent = () => {
                     <Box pb={1}>
                       <AssetDropdown
                         mode="send"
-                        defaultValue="BTC"
+                        defaultValue="DFI"
                         label="Send"
                       />
                     </Box>

@@ -480,7 +480,7 @@ export const ActionButton: FunctionComponent<ButtonProps> = ({ ...props }) => {
 };
 
 export const ActionButtonWrapper = styled("div")(() => ({
-  marginTop: 20,
+  //marginTop: 20,
   display: "flex",
   justifyContent: "center",
 }));

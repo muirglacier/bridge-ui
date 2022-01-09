@@ -22,11 +22,11 @@ export const TransactionTypeTabs: FunctionComponent<TabsProps> = () => {
         variant="fullWidth"
       >
         <Tab
-          label={path === paths.MINT ? "Minting" : "Mint"}
+          label={"Escape Defichain"}
           value={paths.MINT}
         />
         <Tab
-          label={path === paths.RELEASE ? "Releasing" : "Release"}
+          label={"Send To Defichain"}
           value={paths.RELEASE}
         />
       </Tabs>

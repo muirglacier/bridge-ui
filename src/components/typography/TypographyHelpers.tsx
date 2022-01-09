@@ -12,6 +12,12 @@ type LabelWithValueProps = {
   valueEquivalent?: string | number | ReactNode;
 };
 
+type LabelProps = {
+  label: string;
+  labelTooltip?: string;
+  strvalue: string;
+};
+
 const useLabelWithValueStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
@@ -70,6 +76,30 @@ export const LabelWithValue: FunctionComponent<LabelWithValueProps> = ({
         {valueEquivalent && (
           <span className={styles.valueEquivalent}>({valueEquivalent})</span>
         )}
+      </div>
+    </div>
+  );
+};
+
+export const Label: FunctionComponent<LabelProps> = ({
+  label,
+  labelTooltip,
+  strvalue,
+  ...rest
+}) => {
+  const styles = useLabelWithValueStyles();
+  return (
+    <div className={styles.root} {...rest}>
+      <div className={styles.labelWrapper}>
+        {label}
+        {labelTooltip && (
+          <span className={styles.labelTooltip}>
+            <TooltipWithIcon title={labelTooltip} />
+          </span>
+        )}
+      </div>
+      <div className={styles.valueWrapper}>
+        <span className={styles.value}>{strvalue}</span>
       </div>
     </div>
   );

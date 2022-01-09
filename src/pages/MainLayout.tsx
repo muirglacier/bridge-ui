@@ -56,7 +56,6 @@ import {
   walletPickerModalConfig,
 } from "../providers/multiwallet/Multiwallet";
 import { TransactionHistoryMenuIconButton } from "../components/buttons/Buttons";
-import { RenBridgeLogoIcon } from "../components/icons/RenIcons";
 import { Debug } from "../components/utils/Debug";
 import {
   useWalletPickerStyles,
@@ -189,12 +188,6 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const ToolbarMenu = (
     <>
       <div className={styles.desktopMenu}>
-        <TransactionHistoryMenuIconButton
-          opened={txHistoryOpened}
-          indicator={showTxIndicator}
-          className={styles.desktopTxHistory}
-          onClick={handleTxHistoryToggle}
-        />
         <WalletConnectionStatusButton
           onClick={handleWalletButtonClick}
           hoisted={txHistoryOpened}
@@ -230,7 +223,6 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       PaperProps={{ className: styles.drawerPaper }}
     >
       <div className={styles.drawerHeader}>
-        <RenBridgeLogoIcon className={styles.drawerLogo} />
         <IconButton
           aria-label="close"
           className={styles.drawerClose}

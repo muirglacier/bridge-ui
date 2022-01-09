@@ -4,6 +4,8 @@ import React, { FunctionComponent } from "react";
 import { getScalingProps } from "../../utils/icons";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
 import { ReactComponent as Beta } from "./../../assets/icons/icon-beta.svg";
+import { ReactComponent as Defi } from "./../../assets/icons/dfi.svg";
+import { ReactComponent as DefiBr } from "./../../assets/icons/brdfi.svg";
 import { ReactComponent as BchGrey } from "./../../assets/icons/bch-icon-grey.svg";
 import { ReactComponent as Bch } from "./../../assets/icons/bch-icon-nocolour.svg";
 import { ReactComponent as BchFull } from "./../../assets/icons/bch-icon.svg";
@@ -295,4 +297,12 @@ export const FilFullIcon: CustomSvgIconComponent = (props) => (
 
 export const FilGreyIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={FilGrey} {...props} />
+);
+
+export const DefiIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={Defi} {...props} />
+);
+
+export const DefiBrIcon: CustomSvgIconComponent = (props) => (
+  <SvgIcon component={DefiBr} {...props} />
 );

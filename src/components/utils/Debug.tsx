@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useCallback, useState } from "react";
 import { makeStyles } from "@material-ui/core";
 import classNames from "classnames";
-
+import {DEV} from "../../constants/environmentVariables"
 const useStyles = makeStyles({
   root: {
     background: "lightgray",
@@ -22,7 +22,7 @@ const useStyles = makeStyles({
   },
 });
 
-const off = process.env.NODE_ENV === "production";
+const off = DEV == false;
 
 type DebugProps = {
   it: any;
@@ -31,16 +31,12 @@ type DebugProps = {
   wrapper?: boolean;
 };
 
-function replacer(name: any, val: any) {
-  if (val && val.type === "Buffer") {
-    return "buffer";
-  }
-  return val;
-}
 
 type DebugWrapperProps = {
   enabled: boolean;
 };
+
+
 
 const DebugWrapper: FunctionComponent<DebugWrapperProps> = ({
   enabled,
@@ -64,6 +60,22 @@ const DebugWrapper: FunctionComponent<DebugWrapperProps> = ({
   );
 };
 
+const getCircularReplacer = () => {
+  const seen = new WeakSet();
+  return (key : any, value : any) => {
+    if (value && value.type === "Buffer") {
+      return "buffer";
+    }
+    if (typeof value === "object" && value !== null) {
+      if (seen.has(value)) {
+        return;
+      }
+      seen.add(value);
+    }
+    return value;
+  };
+};
+
 export const Debug: FunctionComponent<DebugProps> = ({
   it,
   force,
@@ -80,7 +92,7 @@ export const Debug: FunctionComponent<DebugProps> = ({
   return show && !disable ? (
     <DebugWrapper enabled={!!wrapper}>
       <pre className={classes.root} onClick={noClick}>
-        {JSON.stringify(target, replacer, 2)}
+        {JSON.stringify(target, getCircularReplacer(), 2)}
       </pre>
     </DebugWrapper>
   ) : null;

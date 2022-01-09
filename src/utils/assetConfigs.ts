@@ -10,6 +10,8 @@ import {
   BtcFullIcon,
   BtcGreyIcon,
   BtcIcon,
+  DefiIcon,
+  DefiBrIcon,
   CustomSvgIconComponent,
   DgbFullIcon,
   DgbGreyIcon,
@@ -37,6 +39,7 @@ export enum RenChain {
   binanceSmartChain = "binanceSmartChain",
   ethereum = "ethereum",
   bitcoin = "bitcoin",
+  defichain = "defichain",
   zcash = "zcash",
   bitcoinCash = "bitcoinCash",
   dogecoin = "dogecoin",
@@ -45,12 +48,14 @@ export enum RenChain {
 
 export enum BridgeCurrency {
   BTC = "BTC",
+  DFI = "DFI",
   BCH = "BCH",
   DOTS = "DOTS",
   DOGE = "DOGE",
   ZEC = "ZEC",
   DGB = "DGB",
   RENBTC = "RENBTC",
+  RENDFI = "RENDFI",
   RENBCH = "RENBCH",
   RENDOGE = "RENDOGE",
   RENZEC = "RENZEC",
@@ -62,6 +67,7 @@ export enum BridgeCurrency {
 
 export enum BridgeChain {
   BTCC = "BTCC",
+  DFIC = "DFIC",
   BCHC = "BCHC",
   ZECC = "ZECC",
   DOGC = "DOGC",
@@ -170,6 +176,19 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     sourceChain: BridgeChain.BTCC,
     networkMappings: oldNetworkMappings,
   },
+  [BridgeCurrency.DFI]: {
+    symbol: BridgeCurrency.DFI,
+    short: "DFI",
+    full: "Defichain",
+    color: bitcoinOrange,
+    FullIcon: DefiIcon,
+    GreyIcon: DefiIcon,
+    Icon: DefiIcon,
+    MainIcon: DefiIcon,
+    rentxName: "dfi",
+    sourceChain: BridgeChain.DFIC,
+    networkMappings: oldNetworkMappings,
+  },
   [BridgeCurrency.RENBTC]: {
     symbol: BridgeCurrency.RENBTC,
     short: "renBTC",
@@ -181,6 +200,19 @@ export const currenciesConfig: Record<BridgeCurrency, CurrencyConfig> = {
     rentxName: "renBTC",
     sourceChain: BridgeChain.ETHC,
     bandchainSymbol: BridgeCurrency.BTC,
+    networkMappings: oldNetworkMappings,
+  },
+  [BridgeCurrency.RENDFI]: {
+    symbol: BridgeCurrency.RENDFI,
+    short: "brDFI",
+    full: "Bridged DFI",
+    FullIcon: DefiBrIcon,
+    GreyIcon: DefiBrIcon,
+    Icon: DefiBrIcon,
+    MainIcon: DefiBrIcon,
+    rentxName: "brDFI",
+    sourceChain: BridgeChain.ETHC,
+    bandchainSymbol: BridgeCurrency.DFI,
     networkMappings: oldNetworkMappings,
   },
   [BridgeCurrency.BCH]: {
@@ -392,6 +424,19 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     nativeCurrency: BridgeCurrency.BTC,
     targetConfirmations: 6,
   },
+  [BridgeChain.DFIC]: {
+    symbol: BridgeChain.DFIC,
+    short: "DFI",
+    full: "Defichain",
+    FullIcon: NotSetIcon,
+    Icon: DefiIcon,
+    MainIcon: DefiIcon,
+    GreyIcon: NotSetIcon,
+    rentxName: RenChain.defichain,
+    blockTime: 10,
+    nativeCurrency: BridgeCurrency.DFI,
+    targetConfirmations: 6,
+  },
   [BridgeChain.BCHC]: {
     symbol: BridgeChain.BCHC,
     short: "BCH",
@@ -432,7 +477,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
   [BridgeChain.BSCC]: {
     symbol: BridgeChain.BSCC,
     short: "BSC",
-    full: "Binance Smart Chain",
+    full: "Binance Chain",
     FullIcon: BinanceChainFullIcon,
     Icon: BinanceChainIcon,
     MainIcon: BinanceChainFullIcon,
@@ -526,10 +571,7 @@ export const getNetworkConfigByRentxName = (name: string) => {
 };
 
 export const supportedLockCurrencies = [
-  BridgeCurrency.BTC,
-  BridgeCurrency.BCH,
-  BridgeCurrency.DOGE,
-  BridgeCurrency.ZEC,
+  BridgeCurrency.DFI,
 ];
 
 export const supportedMintDestinationChains = [
@@ -540,16 +582,15 @@ export const supportedMintDestinationChains = [
 export const supportedBurnChains = [BridgeChain.ETHC, BridgeChain.BSCC];
 
 export const supportedReleaseCurrencies = [
-  BridgeCurrency.RENBTC,
-  BridgeCurrency.RENBCH,
-  BridgeCurrency.RENDOGE,
-  BridgeCurrency.RENZEC,
+  BridgeCurrency.RENDFI,
 ];
 
 export const toMintedCurrency = (lockedCurrency: BridgeCurrency) => {
   switch (lockedCurrency) {
     case BridgeCurrency.BTC:
       return BridgeCurrency.RENBTC;
+      case BridgeCurrency.DFI:
+        return BridgeCurrency.RENDFI;
     case BridgeCurrency.BCH:
       return BridgeCurrency.RENBCH;
     case BridgeCurrency.DOGE:
@@ -565,6 +606,8 @@ export const toReleasedCurrency = (burnedCurrency: BridgeCurrency) => {
   switch (burnedCurrency) {
     case BridgeCurrency.RENBTC:
       return BridgeCurrency.BTC;
+    case BridgeCurrency.RENDFI:
+      return BridgeCurrency.DFI;
     case BridgeCurrency.RENBCH:
       return BridgeCurrency.BCH;
     case BridgeCurrency.RENDOGE:

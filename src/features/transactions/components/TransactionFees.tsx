@@ -19,12 +19,7 @@ import {
 import { fromGwei } from "../../../utils/converters";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
-import { $exchangeRates, $gasPrices } from "../../marketData/marketDataSlice";
-import {
-  findExchangeRate,
-  findGasPrice,
-  USD_SYMBOL,
-} from "../../marketData/marketDataUtils";
+
 import { mintTooltips } from "../../mint/components/MintHelpers";
 import { useSelectedChainWallet } from "../../wallet/walletHooks";
 import { getFeeTooltips, TxType } from "../transactionsUtils";
@@ -46,26 +41,16 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
 }) => {
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
-  const exchangeRates = useSelector($exchangeRates);
-  const gasPrices = useSelector($gasPrices);
-  const currencyUsdRate = findExchangeRate(exchangeRates, currency, USD_SYMBOL);
-  const gasPrice = findGasPrice(gasPrices, chain);
   const targetChainConfig = getChainConfig(chain);
 
-  const targetChainCurrencyUsdRate = findExchangeRate(
-    exchangeRates,
-    targetChainConfig.nativeCurrency,
-    USD_SYMBOL
-  );
-  const amountUsd = amount * currencyUsdRate;
+
   const { fees, pending } = useFetchFees(currency, type);
   const { renVMFee, renVMFeeAmount, networkFee } = getTransactionFees({
     amount,
     fees,
     type,
   });
-  const renVMFeeAmountUsd = amountUsd * renVMFee;
-  const networkFeeUsd = networkFee * currencyUsdRate;
+ 
 
   const sourceCurrency =
     type === TxType.MINT ? currency : toReleasedCurrency(currency);
@@ -81,9 +66,8 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     chain,
   });
 
-  const feeInGwei = Math.ceil(MINT_GAS_UNIT_COST * gasPrice * 1.18); // gas price to real gas price adjustment
+  const feeInGwei = 1337; // gas price to real gas price adjustment
   const targetChainFeeNative = fromGwei(feeInGwei);
-  const targetChainFeeUsd = fromGwei(feeInGwei) * targetChainCurrencyUsdRate;
   const targetChainCurrency = getCurrencyConfig(
     targetChainConfig.nativeCurrency
   );
@@ -98,21 +82,13 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     <>
       <Debug it={{ currency, fees }} />
       <LabelWithValue
-        label="RenVM Fee"
+        label="Bridge Node Fee"
         labelTooltip={tooltips.renVmFee}
         value={
           <NumberFormatText
-            value={renVMFeeAmount}
-            spacedSuffix={currencyConfig.short}
-            decimalScale={8}
-          />
-        }
-        valueEquivalent={
-          <NumberFormatText
-            value={renVMFeeAmountUsd}
-            prefix="$"
+            value={renVMFee}
+            spacedSuffix={"%"}
             decimalScale={2}
-            fixedDecimalScale
           />
         }
       />
@@ -125,14 +101,6 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
             spacedSuffix={sourceCurrencyChainConfig.short}
           />
         }
-        valueEquivalent={
-          <NumberFormatText
-            value={networkFeeUsd}
-            prefix="$"
-            decimalScale={2}
-            fixedDecimalScale
-          />
-        }
       />
       <LabelWithValue
         label={`Esti. ${targetChainConfig.short} Fee`}
@@ -142,14 +110,6 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
             value={targetChainFeeNative}
             spacedSuffix={targetChainCurrency.short}
             decimalScale={4}
-          />
-        }
-        valueEquivalent={
-          <NumberFormatText
-            value={targetChainFeeUsd}
-            prefix="$"
-            decimalScale={2}
-            fixedDecimalScale
           />
         }
       />

@@ -40,8 +40,6 @@ import {
 } from '../../wallet/walletSlice'
 import {
   $mint,
-  $mintUsdAmount,
-  setMintAmount,
   setMintCurrency,
 } from '../mintSlice'
 
@@ -50,23 +48,11 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
 }) => {
   const dispatch = useDispatch();
 
-  const { currency, amount } = useSelector($mint);
+  const { currency } = useSelector($mint);
   const { chain } = useSelector($wallet);
   const { walletConnected } = useSelectedChainWallet();
-  const { fees, pending } = useFetchFees(currency, TxType.MINT);
-  const { conversionTotal } = getTransactionFees({
-    amount,
-    type: TxType.MINT,
-    fees,
-  });
-  const currencyUsdValue = useSelector($mintUsdAmount);
+ 
 
-  const handleAmountChange = useCallback(
-    (value) => {
-      dispatch(setMintAmount(value));
-    },
-    [dispatch]
-  );
   const handleCurrencyChange = useCallback(
     (event) => {
       dispatch(setMintCurrency(event.target.value));
@@ -83,13 +69,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   const renCurrency = toMintedCurrency(currency);
   useRenNetworkTracker(renCurrency);
 
-  const hasMinimalAmount = isMinimalAmount(
-    amount,
-    conversionTotal,
-    TxType.MINT
-  );
-  const basicCondition = !!amount && amount > 0 && !pending;
-  const enabled = basicCondition && hasMinimalAmount;
+  const enabled = true;
 
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {
@@ -108,24 +88,6 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   return (
     <>
       <PaperContent bottomPadding>
-        <BigCurrencyInputWrapper>
-          <BigCurrencyInput
-            onChange={handleAmountChange}
-            symbol={currency}
-            usdValue={currencyUsdValue}
-            value={amount}
-            errorText={
-              basicCondition && !hasMinimalAmount ? (
-                <span>
-                  Amount too low{" "}
-                  <TooltipWithIcon title="After fees have been applied, the amount you will receive is too little." />
-                </span>
-              ) : (
-                ""
-              )
-            }
-          />
-        </BigCurrencyInputWrapper>
         <AssetDropdownWrapper>
           <AssetDropdown
             label="Send"
@@ -146,22 +108,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         </AssetDropdownWrapper>
       </PaperContent>
       <Divider />
-      <PaperContent darker topPadding bottomPadding>
-        {walletConnected &&
-          (pending ? (
-            <CenteredProgress />
-          ) : (
-            <AssetInfo
-              label="Receiving:"
-              value={
-                <NumberFormatText
-                  value={conversionTotal}
-                  spacedSuffix={mintedCurrencyConfig.short}
-                />
-              }
-              Icon={<GreyIcon fontSize="inherit" />}
-            />
-          ))}
+      <PaperContent darker topPadding bottomPadding>         
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleNextStep}

@@ -58,7 +58,7 @@ const useAssetDropdownStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     borderRadius: theme.shape.borderRadius,
-    border: `1px solid ${theme.palette.divider}`,
+    border: `1px solid ${theme.customColors.grayLight}`,
   },
   inputRoot: {
     width: "100%",
@@ -151,7 +151,7 @@ export const AssetDropdown: FunctionComponent<AssetDropdownProps> = ({
           </Box>
           <Box flexGrow={1}>
             <Typography variant="body2">
-              {selected && mode === "chain" ? full : short}
+              {selected && mode === "chain" ? full : full}
             </Typography>
           </Box>
         </Box>

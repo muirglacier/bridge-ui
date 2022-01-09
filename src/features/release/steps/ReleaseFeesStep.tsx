@@ -39,8 +39,6 @@ import {
 } from "../../../utils/assetConfigs";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
-import { $exchangeRates } from "../../marketData/marketDataSlice";
-import { findExchangeRate, USD_SYMBOL } from "../../marketData/marketDataUtils";
 import { $renNetwork } from "../../network/networkSlice";
 import { TransactionFees } from "../../transactions/components/TransactionFees";
 import {
@@ -63,7 +61,7 @@ import {
   setWalletPickerOpened,
 } from "../../wallet/walletSlice";
 import { releaseTooltips } from "../components/ReleaseHelpers";
-import { $release, $releaseUsdAmount } from "../releaseSlice";
+import { $release } from "../releaseSlice";
 import {
   createReleaseTransaction,
   preValidateReleaseTransaction,
@@ -77,44 +75,31 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const history = useHistory();
   const { account, walletConnected } = useSelectedChainWallet();
   const [releasingInitialized, setReleasingInitialized] = useState(false);
-  const { amount, currency, address } = useSelector($release);
+  const { currency, address } = useSelector($release);
   const network = useSelector($renNetwork);
   const {
     chain,
     signatures: { signature },
   } = useSelector($wallet);
   const renChain = useSelector($multiwalletChain);
-  const amountUsd = useSelector($releaseUsdAmount);
-  const rates = useSelector($exchangeRates);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
-  const { conversionTotal } = getTransactionFees({
-    amount,
-    fees,
-    type: TxType.BURN,
-  });
-
+  
   const currencyConfig = getCurrencyConfig(currency);
   const chainConfig = getChainConfig(chain);
   const destinationCurrency = toReleasedCurrency(currency);
-  const destinationCurrencyUsdRate = findExchangeRate(
-    rates,
-    destinationCurrency,
-    USD_SYMBOL
-  );
-  const destinationAmountUsd = conversionTotal * destinationCurrencyUsdRate;
+  
   const destinationCurrencyConfig = getCurrencyConfig(destinationCurrency);
   const { MainIcon } = destinationCurrencyConfig;
   const tx = useMemo(
     () =>
       createReleaseTransaction({
-        amount: amount,
         currency: currency,
         destAddress: address,
         userAddress: account,
         sourceChain: renChain,
         network: network,
       }),
-    [amount, currency, address, account, renChain, network]
+    [currency, address, account, renChain, network]
   );
   const canInitializeReleasing = preValidateReleaseTransaction(tx);
 
@@ -172,7 +157,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           <BigAssetAmount
             value={
               <NumberFormatText
-                value={amount}
+                value={0}
                 spacedSuffix={currencyConfig.short}
               />
             }
@@ -186,13 +171,13 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           labelTooltip={releaseTooltips.releasing}
           value={
             <NumberFormatText
-              value={amount}
+              value={0}
               spacedSuffix={currencyConfig.short}
             />
           }
           valueEquivalent={
             <NumberFormatText
-              value={amountUsd}
+              value={0}
               spacedSuffix="USD"
               decimalScale={2}
               fixedDecimalScale
@@ -215,7 +200,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         </Typography>
         <TransactionFees
           chain={chain}
-          amount={amount}
+          amount={0}
           currency={currency}
           type={TxType.BURN}
         />
@@ -230,14 +215,14 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
               label="Receiving"
               value={
                 <NumberFormatText
-                  value={conversionTotal}
+                  value={0}
                   spacedSuffix={destinationCurrencyConfig.short}
                 />
               }
               valueEquivalent={
                 <NumberFormatText
                   prefix=" = $"
-                  value={destinationAmountUsd}
+                  value={0}
                   spacedSuffix="USD"
                   decimalScale={2}
                   fixedDecimalScale
