@@ -137,7 +137,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
 
   const [machineSend, setMachineSend] = useState<MachineSend>();
   const handleMachineReady = useCallback<OnMachineSendReadyFn>((send) => {
-    setMachineSend(() => send);
+    //setMachineSend(() => send);
   }, []);
   const handleUpdateTx = useCallback<UpdateTxFn>(
     (amount, vOut, txHash) => {
@@ -154,7 +154,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
       console.log("restoring");
       if (machineSend) {
         // @ts-ignore
-        machineSend({ type: "RESTORE", data: { rawSourceTx } });
+        //machineSend({ type: "RESTORE", data: { rawSourceTx } });
       }
     },
     [machineSend]
@@ -505,7 +505,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   const history = useHistory();
   const location = useLocation();
   const handleSubmitToDestinationChain = useCallback(() => {
-    machine.send({ type: "CLAIM" });
+    //machine.send({ type: "CLAIM" });
   }, [machine]);
 
   const handleReload = useCallback(() => {

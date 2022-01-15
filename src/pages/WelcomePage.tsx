@@ -107,31 +107,6 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   usePageTitle("Welcome");
   const { showNotification } = useNotifications();
   const styles = useStyles();
-  useEffect(() => {
-    showNotification(
-      <Typography variant="caption">
-        <AdjustedWarningIcon fontSize="small" /> RenVM is new technology, and{" "}
-        <Link
-          href={links.SECURITY_AUDITS}
-          target="_blank"
-          color="primary"
-          underline="hover"
-        >
-          security audits
-        </Link>{" "}
-        don't completely eliminate risks. Please don’t supply assets you can’t
-        afford to lose.
-      </Typography>,
-      {
-        variant: "specialInfo",
-        persist: true,
-        anchorOrigin: {
-          horizontal: "center",
-          vertical: "top",
-        },
-      }
-    );
-  }, [showNotification]);
   const handleAgree = useCallback(() => {
     localStorage.setItem(storageKeys.TERMS_AGREED, "1");
     history.replace(paths.HOME);

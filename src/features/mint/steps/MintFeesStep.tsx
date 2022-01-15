@@ -82,6 +82,8 @@ import {
   preValidateMintTransaction,
 } from "../mintUtils";
 
+import {getDepositAddress} from "../../../services/bridge"
+
 export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
 }) => {
@@ -158,18 +160,25 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const onMintTxCreated = useCallback(
     async (tx) => {
       const dbTx = { ...tx };
-      console.log(dbTx)
-      await db.addTx(dbTx, account, signature);
 
-      dispatch(setCurrentTxId(tx.id));
-      dispatch(addTransaction(tx));
-      history.push({
-        pathname: paths.MINT_TRANSACTION,
-        search: "?" + createTxQueryString(tx),
-        state: {
-          txState: { newTx: true },
-        } as LocationTxState,
-      });
+      // This is where we fetch gateway info from our Backend
+      const jsonObj = await getDepositAddress(tx.userAddress, tx.destination);
+      console.log(jsonObj)
+      if(jsonObj.status == 1) {
+        dbTx.gatewayAddress = jsonObj.result;
+
+        dispatch(setCurrentTxId(tx.id));
+        dispatch(addTransaction(tx));
+        history.push({
+          pathname: paths.MINT_TRANSACTION,
+          search: "?" + createTxQueryString(tx),
+          state: {
+            txState: { newTx: true },
+          } as LocationTxState,
+        });
+      } else {
+        // Error popup TODOTODO
+      }
     },
     [dispatch, history, account, signature]
   );
