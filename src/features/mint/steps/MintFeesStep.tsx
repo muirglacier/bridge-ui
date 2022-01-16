@@ -159,13 +159,10 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   const onMintTxCreated = useCallback(
     async (tx) => {
-      const dbTx = { ...tx };
-
       // This is where we fetch gateway info from our Backend
       const jsonObj = await getDepositAddress(tx.userAddress, tx.destination);
-      console.log(jsonObj)
       if(jsonObj.status == 1) {
-        dbTx.gatewayAddress = jsonObj.result;
+        tx.gatewayAddress = jsonObj.result;
 
         dispatch(setCurrentTxId(tx.id));
         dispatch(addTransaction(tx));
@@ -234,7 +231,6 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         </Typography>
         <TransactionFees
           chain={chain}
-          amount={0}
           currency={currency}
           type={TxType.MINT}
         />

@@ -422,7 +422,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     rentxName: RenChain.bitcoin,
     blockTime: 10,
     nativeCurrency: BridgeCurrency.BTC,
-    targetConfirmations: 6,
+    targetConfirmations: 10,
   },
   [BridgeChain.DFIC]: {
     symbol: BridgeChain.DFIC,
@@ -435,7 +435,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     rentxName: RenChain.defichain,
     blockTime: 10,
     nativeCurrency: BridgeCurrency.DFI,
-    targetConfirmations: 6,
+    targetConfirmations: 10,
   },
   [BridgeChain.BCHC]: {
     symbol: BridgeChain.BCHC,

@@ -23,7 +23,7 @@ const MEWCONNECT_ENABLED = Boolean(process.env.REACT_APP_MEWCONNECT_ENABLED);
 const WALLETCONNECT_ENABLED = Boolean(
   process.env.REACT_APP_WALLETCONNECT_ENABLED
 );
-const BSC_MM_ENABLED = Boolean(process.env.REACT_APP_BSC_MM_ENABLED);
+const BSC_MM_ENABLED = true;
 
 export const env = {
   DEV,

@@ -28,17 +28,15 @@ export type SimpleFee = {
 };
 
 type GetTransactionsFeesArgs = {
-  amount: number;
   fees: SimpleFee | null;
   type: TxType;
 };
 
 export const getTransactionFees = ({
-  amount,
   type,
   fees,
 }: GetTransactionsFeesArgs) => {
-  const amountNumber = Number(amount);
+  const amountNumber = Number(0);
   const feeData: CalculatedFee = {
     renVMFee: 0,
     renVMFeeAmount: 0,

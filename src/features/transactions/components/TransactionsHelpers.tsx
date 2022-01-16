@@ -350,20 +350,3 @@ export const WrongAddressWarningDialog: FunctionComponent<WrongAddressWarningDia
   );
 };
 
-export const AuthWarningDialog: FunctionComponent<WarningWithActionsProps> = ({
-  ...props
-}) => {
-  return (
-    <WarningDialog
-      reason="Allow RenBridge to backup transactions"
-      mainActionText="Sign & allow to continue"
-      {...props}
-    >
-      <span>
-        To continue, you must sign with your wallet to allow RenBridge to backup
-        your transactions. This allows you to resume a transaction if you close
-        your web browser mid-transaction.
-      </span>
-    </WarningDialog>
-  );
-};

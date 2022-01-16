@@ -1,5 +1,6 @@
 import { RenNetwork } from "@renproject/interfaces";
-import { GatewaySession, GatewayTransaction } from "@renproject/ren-tx";
+import { GatewaySession } from "@renproject/ren-tx";
+import { DepositEntry } from "../../services/bridge";
 import {
   BridgeChain,
   BridgeCurrency,
@@ -100,15 +101,15 @@ export const preValidateMintTransaction = (tx: GatewaySession) => {
     tx.userAddress);
 };
 
-export const depositSorter = (a: GatewayTransaction, b: GatewayTransaction) => {
-  const aConf = a.detectedAt || 0;
-  const bConf = b.detectedAt || 0;
+export const depositSorter = (a: DepositEntry, b: DepositEntry) => {
+  const aConf = a.tx_height || 0;
+  const bConf = b.tx_height || 0;
   return Number(aConf) - Number(bConf);
 };
 
 export const getDepositParams = (
   tx: GatewaySession,
-  transaction: GatewayTransaction | null
+  transaction: DepositEntry | null
 ) => {
   const { lockChainConfig, mintChainConfig } = getLockAndMintBasicParams(tx);
   let mintTxHash: string = "";
@@ -129,20 +130,9 @@ export const getDepositParams = (
   let lockConfirmations = 0;
   let lockTargetConfirmations = 0;
   if (transaction) {
-    lockTxAmount = transaction.sourceTxAmount / 1e8;
-    if (transaction.rawSourceTx) {
-      lockTxHash = transaction.rawSourceTx.transaction.txHash;
-      lockTxLink =
-        getChainExplorerLink(lockChainConfig.symbol, tx.network, lockTxHash) ||
-        "";
-    }
-    lockConfirmations = transaction.sourceTxConfs;
-    if (transaction.sourceTxConfTarget) {
-      lockTargetConfirmations = transaction.sourceTxConfTarget;
-      lockProcessingTime =
-        Math.max(lockTargetConfirmations - lockConfirmations, 0) *
-        lockChainConfig.blockTime;
-    }
+    lockTxAmount = 0;
+    lockConfirmations = transaction.confirmations || 0;
+   
   }
   const meta: DepositMeta = {
     status: DepositEntryStatus.PENDING,

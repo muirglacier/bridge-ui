@@ -42,7 +42,6 @@ import { WalletConnectionStatusType, WalletStatus } from "../utils/types";
 export const useWalletPickerStyles = makeStyles((theme) => ({
   root: {
     width: 400,
-    minHeight: 441,
   },
   body: {
     padding: 24,
@@ -176,7 +175,6 @@ export const WalletConnectingInfo: WalletPickerProps<
 
 const useWalletConnectionProgressStyles = makeStyles((theme) => ({
   iconWrapper: {
-    borderRadius: "50%",
     padding: 13,
     backgroundColor: theme.palette.divider,
     display: "flex",

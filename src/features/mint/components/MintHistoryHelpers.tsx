@@ -118,7 +118,7 @@ export const MintTransactionEntry: FunctionComponent<TransactionItemProps> = ({
     currentIndex,
     currentHash,
     total,
-  } = useDepositPagination(tx);
+  } = useDepositPagination(tx, "", (string) => {});
 
   const {
     lockChainConfig,

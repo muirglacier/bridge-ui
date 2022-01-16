@@ -58,7 +58,6 @@ const useCircleIconStyles = makeStyles((theme) => ({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: "50%",
     padding: 3,
     fontSize: 15,
   },

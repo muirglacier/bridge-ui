@@ -221,7 +221,6 @@ export const ReleaseProcessStep: FunctionComponent<RouteComponentProps> = ({
             <SpacedDivider />
             <TransactionFees
               chain={chain}
-              amount={0}
               currency={burnCurrencyConfig.symbol}
               type={TxType.BURN}
             />

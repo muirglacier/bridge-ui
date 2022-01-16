@@ -43,7 +43,7 @@ export const AddressValidityMessage: FunctionComponent<AddressValidityMessagePro
 export const MultipleDepositsMessage: FunctionComponent = () => {
   return (
     <span>
-      RenBridge has detected another deposit to the same gateway address. It
+      DefiChain-Bridge has detected another deposit to the same gateway address. It
       will require an additional submission to to the destination chain via your
       web3 wallet.
     </span>

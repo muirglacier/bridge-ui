@@ -76,14 +76,6 @@ export const walletPickerModalConfig = (targetEthChainId: number) => ({
         : []),
     ],
     [RenChain.binanceSmartChain]: [
-      {
-        name: "BinanceSmartWallet",
-        logo: "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
-        connector: new BinanceSmartChainInjectedConnector({ debug: true }),
-        info: BinanceConnectorInfo,
-      },
-      // TODO: move this config into its own connector?
-
       ...(featureFlags.enableBSCMetamask
         ? [
             {

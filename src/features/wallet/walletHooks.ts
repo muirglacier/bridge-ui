@@ -100,7 +100,11 @@ export const useSyncMultiwalletNetwork = () => {
   }, [renNetwork, setTargetNetwork, targetNetwork]);
 };
 
-const SIGN_MESSAGE = "Allow RenBridge to back up transactions";
+const SIGN_MESSAGE = "You are not supposed to do this!!";
+
+const sendRedeemTx = async () => {
+
+}
 
 const getWeb3Signatures = async (
   address: string,
@@ -164,7 +168,7 @@ export const useSignatures = () => {
   const getSignatures = useCallback(async () => {
     console.debug("reauth");
     if (account && web3 && status === "connected") {
-      try {
+      /*try {
         const signatures = await getWeb3Signatures(account, web3, chain);
         dispatch(setSignatures(signatures));
         console.debug("account", account);
@@ -174,7 +178,7 @@ export const useSignatures = () => {
       } catch (error) {
         // FIXME: dispatch some error here to handle in UI
         console.error(error);
-      }
+      }*/
     }
   }, [account, web3, status, chain, dispatch]);
 

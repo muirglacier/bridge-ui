@@ -1,3 +1,4 @@
+import { BottomNavigationClassKey } from "@material-ui/core";
 import { RenNetwork } from "@renproject/interfaces";
 import { GatewaySession } from "@renproject/ren-tx";
 import queryString from "query-string";
@@ -142,6 +143,10 @@ export const cloneTx = (tx: GatewaySession) =>
 
 type ParsedGatewaySession = GatewaySession & {
   depositHash?: string;
+  depositN?: number;
+  confirmations?: number;
+  good?: boolean;
+  in_flight?: boolean;
 };
 
 export const parseTxQueryString: (
@@ -238,7 +243,7 @@ export const getTxPageTitle = (tx: GatewaySession) => {
   const type = tx.type === TxType.MINT ? "Mint" : "Release";
   const date = new Date(getTxCreationTimestamp(tx)).toISOString();
 
-  return `${type} - ${amount} ${asset} - ${date}`;
+  return `${type} - ${asset}`;
 };
 
 export const getTxCreationTimestamp = (tx: GatewaySession) =>
@@ -250,7 +255,7 @@ export const getPaymentLink = (
   amount: number
 ) => {
   const chainConfig = getChainConfig(chain);
-  return `${chainConfig.rentxName}://${address}?amount=${amount}`;
+  return `${address}`;
 };
 
 export const isTransactionCompleted = (tx: GatewaySession) => {

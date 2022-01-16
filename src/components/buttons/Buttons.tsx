@@ -162,6 +162,7 @@ const useLightIconButtonStyles = makeStyles((theme) => ({
   root: {
     color: blue,
     backgroundColor: skyBlueLighter,
+    borderRadius: 0,
     fontSize: 19,
     "&:hover": {
       backgroundColor: skyBlue,
@@ -184,7 +185,6 @@ const useCopyContentButtonStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 2,
     fontSize: 13,
-    borderRadius: 20,
     marginRight: 10,
     color: blue,
     backgroundColor: skyBlueLighter,
@@ -192,7 +192,6 @@ const useCopyContentButtonStyles = makeStyles((theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    maxWidth: 265,
   },
   contentValue: {
     maxWidth: "100%",
@@ -222,7 +221,7 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
       setCopied(true);
       setTimeout(() => {
         setCopied(false);
-      }, 4000);
+      }, 2000);
     }
   }, [content, copied]);
   return (
@@ -234,7 +233,7 @@ export const CopyContentButton: FunctionComponent<CopyContentButtonProps> = ({
           </Fade>
         )}
         <Hide when={copied} className={styles.contentValue}>
-          <MiddleEllipsisText hoverable>{content}</MiddleEllipsisText>
+          <MiddleEllipsisText>{content}</MiddleEllipsisText>
         </Hide>
       </div>
       <div className={styles.copy}>
@@ -376,7 +375,6 @@ export const BigQrCode = styled("div")(({ theme }) => ({
   width: 132,
   height: 132,
   padding: 15,
-  borderRadius: 20,
   display: "flex",
   alignItems: "center",
   justifyContent: "center",

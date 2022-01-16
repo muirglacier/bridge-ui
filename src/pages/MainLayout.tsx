@@ -30,7 +30,6 @@ import { useDebounce, useWindowSize } from "react-use";
 import { env } from "../constants/environmentVariables";
 import { $renNetwork } from "../features/network/networkSlice";
 import { useSetNetworkFromParam } from "../features/network/networkUtils";
-import { AuthWarningDialog } from "../features/transactions/components/TransactionsHelpers";
 import { TransactionHistory } from "../features/transactions/TransactionHistory";
 import {
   $transactionsData,
@@ -295,7 +294,6 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     >
       {children}
       <TransactionHistory />
-      <AuthWarningDialog open={authWarningOpened} onMainAction={authenticate} />
       <Debug
         it={{
           isAuthenticated,

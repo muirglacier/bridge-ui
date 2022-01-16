@@ -40,6 +40,7 @@ import {
   useSetActionRequired,
   useSetPaperTitle,
 } from "../../../providers/TitleProviders";
+import { DepositEntry } from "../../../services/bridge";
 import { orangeLight } from "../../../theme/colors";
 import { getChainConfigByRentxName } from "../../../utils/assetConfigs";
 import { trimAddress } from "../../../utils/strings";
@@ -63,15 +64,6 @@ export type MintDepositToProps = {
 export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
   tx,
 }) => {
-  const [showQr, setShowQr] = useState(false);
-  const toggleQr = useCallback(() => {
-    setShowQr(!showQr);
-  }, [showQr]);
-  const { showNotification, closeNotification } = useNotifications();
-  const [timeRemained] = useState(getRemainingGatewayTime(tx.expiryTime));
-
-
-
   const {
     lockCurrencyConfig,
     lockChainConfig,
@@ -94,21 +86,15 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
         <BigAssetAmount
           value={
             <span>
-              Send{" "}
-              <NumberFormatText
-                value={suggestedAmount}
-                spacedSuffix={lockCurrencyConfig.short}
-              />{" "}
-              to
+              Send {lockCurrencyConfig.short} to
             </span>
           }
         />
       </MediumWrapper>
-      {!!tx.gatewayAddress && (
+      {tx.gatewayAddress && (
         <>
-          {showQr && (
             <CenteringSpacedBox>
-              <Grow in={showQr}>
+              <Grow in={true}>
                 <BigQrCode>
                   <QRCode
                     value={getPaymentLink(
@@ -120,37 +106,9 @@ export const MintDepositToStatus: FunctionComponent<MintDepositToProps> = ({
                 </BigQrCode>
               </Grow>
             </CenteringSpacedBox>
-          )}
           <CopyContentButton content={tx.gatewayAddress} />
         </>
       )}
-      <Box
-        mt={2}
-        display="flex"
-        justifyContent="center"
-        flexDirection="column"
-        alignItems="center"
-      >
-        {lockChainConfig.targetConfirmations && (
-          <Typography variant="caption" gutterBottom>
-            Estimated processing time:{" "}
-            {lockChainConfig.targetConfirmations * lockChainConfig.blockTime}{" "}
-            minutes
-          </Typography>
-        )}
-        <Box mt={2}>
-          <QrCodeIconButton onClick={toggleQr} />
-        </Box>
-        <BigTopWrapper>
-          <TransactionDetailsButton
-            label="Recipient Address"
-            isTx={false}
-            address={trimAddress(tx.userAddress, 5)}
-            link={mintAddressLink}
-            size="small"
-          />
-        </BigTopWrapper>
-      </Box>
     </>
   );
 };
@@ -165,7 +123,7 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
   depositHash,
 }) => {
   const [, setTitle] = usePaperTitle();
-  const {
+  let {
     lockCurrencyConfig,
     lockChainConfig,
     lockTxHash,
@@ -176,9 +134,16 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
     lockProcessingTime,
   } = getLockAndMintParams(tx, depositHash);
 
-  const { MainIcon } = lockChainConfig;
 
-  const confirmed = lockConfirmations === lockTargetConfirmations;
+  const dep: DepositEntry = tx.transactions[depositHash]
+  lockTxHash = depositHash
+  lockTxLink = "https://defiscan.live/transactions/" + depositHash.split(":")[0]
+  lockConfirmations = dep?.confirmations || 0
+
+  const { MainIcon } = lockChainConfig;
+  lockTargetConfirmations = lockChainConfig?.targetConfirmations || 0
+
+  const confirmed = lockConfirmations >= lockTargetConfirmations;
   useEffect(() => {
     setTitle(confirmed ? "Confirmed" : "Confirming");
   }, [setTitle, confirmed]);
@@ -214,11 +179,7 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
         address={lockTxHash}
         link={lockTxLink}
       />
-      <ProcessingTimeWrapper>
-        <Typography variant="caption" component="p" align="center">
-          Estimated time remaining: {lockProcessingTime} minutes
-        </Typography>
-      </ProcessingTimeWrapper>
+      
     </>
   );
 };
@@ -241,7 +202,7 @@ type MintDepositAcceptedStatusProps = {
 
 export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedStatusProps> = ({
   tx,
-  onSubmit = () => {},
+  onSubmit,
   onReload,
   submitting,
   submittingError,
@@ -250,7 +211,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   useSetPaperTitle("Submit");
   useSetActionRequired(true);
   const theme = useTheme();
-  const {
+  let {
     lockCurrencyConfig,
     lockChainConfig,
     lockTxHash,
@@ -260,11 +221,14 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
     lockTargetConfirmations,
     mintChainConfig,
   } = getLockAndMintParams(tx, depositHash);
+  const dep: DepositEntry = tx.transactions[depositHash]
+  lockTxHash = depositHash
+  lockTxLink = "https://defiscan.live/transactions/" + depositHash.split(":")[0]
+  lockConfirmations = dep?.confirmations || 0
 
-  const notificationMessage = `${maxConfirmations(
-    lockConfirmations,
-    lockTargetConfirmations
-  )}/${lockTargetConfirmations} confirmations, ready to submit ${
+  lockTargetConfirmations = lockChainConfig?.targetConfirmations || 0
+
+  const notificationMessage = `${lockConfirmations}/${lockTargetConfirmations} confirmations, ready to submit ${
     lockCurrencyConfig.short
   } to ${mintChainConfig.full}?`;
   const { showNotification } = useNotifications();
@@ -298,7 +262,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           value={lockTxAmount}
           spacedSuffix={lockCurrencyConfig.full}
         />{" "}
-        Received
+        Received {lockConfirmations}/{lockTargetConfirmations} Confirmations
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
@@ -332,7 +296,7 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
   depositHash,
 }) => {
   const theme = useTheme();
-  const {
+  let  {
     lockCurrencyConfig,
     lockChainConfig,
     lockTxHash,
@@ -342,6 +306,10 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
     mintTxHash,
     mintChainConfig,
   } = getLockAndMintParams(tx, depositHash);
+
+  const dep: DepositEntry = tx.transactions[depositHash]
+  lockTxHash = depositHash
+  lockTxLink = "https://defiscan.live/transactions/" + depositHash.split(":")[0]
 
   return (
     <>
@@ -412,7 +380,6 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     TxType.MINT
   );
   const { conversionTotal } = getTransactionFees({
-    amount: lockTxAmount,
     fees,
     type: TxType.MINT,
   });

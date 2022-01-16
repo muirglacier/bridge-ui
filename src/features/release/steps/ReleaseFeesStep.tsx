@@ -200,7 +200,6 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         </Typography>
         <TransactionFees
           chain={chain}
-          amount={0}
           currency={currency}
           type={TxType.BURN}
         />

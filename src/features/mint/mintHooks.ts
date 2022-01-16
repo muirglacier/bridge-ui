@@ -41,57 +41,21 @@ export const useMintMachine = (mintTransaction: GatewaySession) => {
     devTools: env.XSTATE_DEVTOOLS,
   });
 
-  useMintTransactionPersistence(machineHook[2]);
-
   return machineHook;
 };
 
 export type DepositMachineSchemaState = keyof DepositMachineSchema["states"];
 
-export const useMintTransactionPersistence = (
-  service: Interpreter<GatewayMachineContext, any, GatewayMachineEvent>
-) => {
-  const dispatch = useDispatch();
-  const sub = useCallback(
-    async (state: State<GatewayMachineContext, GatewayMachineEvent, any>) => {
-      const tx = state.context.tx;
-      try {
-        // DEPOSIT_UPDATE should be a safe event to update the db on
-        if (
-          (state.event.type === "DEPOSIT_UPDATE" ||
-            // We also persist on listening to catch the initial gateway
-            state.event.type === "LISTENING") &&
-          state.value === "listening"
-        ) {
-          // clone prevents throwing serialization errors during dispatch
-          // which breaks the event loop and prevents txs from processing
-          const newDbTx = cloneTx(tx);
-          await db.updateTx(newDbTx);
-          dispatch(updateTransaction(newDbTx));
-        }
-      } catch (err) {
-        console.warn("Mint Tx synchronization failed", err, tx);
-      }
-    },
-    [dispatch]
-  );
 
-  useEffect(() => {
-    service.subscribe(sub);
-    return () => {
-      service.off(sub);
-    };
-  }, [dispatch, service, sub]);
-
-  service.subscribe();
-};
 
 export const useDepositPagination = (
   tx: GatewaySession,
-  depositSourceHash = ""
+  depositSourceHash = "",
+  updateHash: (arg0: string) => void
 ) => {
-  const sortedDeposits = Object.values(tx.transactions).sort(depositSorter);
-  const orderedHashes = sortedDeposits.map((deposit) => deposit.sourceTxHash);
+  const sortedDeposits = tx.transactions;
+  const orderedHashes = Object.keys(sortedDeposits).map((deposit) => deposit);
+
   const total = orderedHashes.length;
   const initial = depositSourceHash || total > 0 ? orderedHashes[0] : "";
   const [currentHash, setCurrentHash] = useState(initial);
@@ -107,16 +71,23 @@ export const useDepositPagination = (
   const prevHash = orderedHashes[prevIndex];
 
   const handleNext = useCallback(() => {
+    console.log(orderedHashes)
+    console.log("next:",nextHash)
     setCurrentHash(nextHash);
+    updateHash(nextHash)
   }, [nextHash]);
+
   const handlePrev = useCallback(() => {
+    console.log("prev:",prevHash)
     setCurrentHash(prevHash);
+    updateHash(prevHash)
   }, [prevHash]);
+
+
   return {
     currentHash,
     currentIndex,
     handleNext,
     handlePrev,
-    total,
-  };
+    total  };
 };

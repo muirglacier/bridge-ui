@@ -27,13 +27,11 @@ import { getFeeTooltips, TxType } from "../transactionsUtils";
 type TransactionFeesProps = {
   type: TxType;
   currency: BridgeCurrency;
-  amount: number;
   chain: BridgeChain;
   address?: string;
 };
 
 export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
-  amount,
   currency,
   type,
   chain,
@@ -46,7 +44,6 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
 
   const { fees, pending } = useFetchFees(currency, type);
   const { renVMFee, renVMFeeAmount, networkFee } = getTransactionFees({
-    amount,
     fees,
     type,
   });

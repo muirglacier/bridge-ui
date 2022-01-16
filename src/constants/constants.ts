@@ -1,4 +1,4 @@
-export const appName = "RenBridge V2";
+export const appName = "Defichain Bridge";
 
 export enum storageKeys {
   TERMS_AGREED = "termsAgreed",
