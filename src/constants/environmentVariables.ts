@@ -25,6 +25,10 @@ const WALLETCONNECT_ENABLED = Boolean(
 );
 const BSC_MM_ENABLED = true;
 
+const ETH_CONTRACT_ADDRESS = "0xc5b225271519EF55Fcfe712572b6192fEcB46d76";
+const BSC_CONTRACT_ADDRESS = "";
+
+
 export const env = {
   DEV,
   NETWORK,
@@ -38,7 +42,10 @@ export const env = {
   MEWCONNECT_ENABLED,
   WALLETCONNECT_ENABLED,
   ETHEREUM_BACKEND_ENDPOINT,
-  BSC_BACKEND_ENDPOINT
+  BSC_BACKEND_ENDPOINT,
+  ETH_CONTRACT_ADDRESS,
+  BSC_CONTRACT_ADDRESS,
+  
 };
 
 if (DEV) console.debug("env", env, process);

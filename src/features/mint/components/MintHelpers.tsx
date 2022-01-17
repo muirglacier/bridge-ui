@@ -2,6 +2,7 @@ import React, { FunctionComponent } from "react";
 import { styled } from "@material-ui/core";
 import { BridgeChainConfig, CurrencyConfig } from "../../../utils/assetConfigs";
 import { HMSCountdown } from "../../transactions/components/TransactionsHelpers";
+import { props } from "../../../theme/props";
 
 export const mintTooltips = {
   sending: "The amount and asset you’re sending before fees are applied.",
@@ -25,6 +26,10 @@ type AddressValidityMessageProps = {
   destNetwork: string;
 };
 
+type GenericProps = {
+  msg: string;
+};
+
 export const AddressValidityMessage: FunctionComponent<AddressValidityMessageProps> = ({
   milliseconds,
   destNetwork,
@@ -46,6 +51,14 @@ export const MultipleDepositsMessage: FunctionComponent = () => {
       DefiChain-Bridge has detected another deposit to the same gateway address. It
       will require an additional submission to to the destination chain via your
       web3 wallet.
+    </span>
+  );
+};
+
+export const GenericMessage: FunctionComponent<GenericProps> = (msg) => {
+  return (
+    <span>
+      {msg}
     </span>
   );
 };

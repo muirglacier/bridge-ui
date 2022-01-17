@@ -40,6 +40,18 @@ export class DepositsMessage {
   blame?: Blame
 }
 
+export class Signature {
+  signed_msg?: string
+  r?: string
+  s?: string
+  recovery_id?: string
+}
+
+export class SignatureMessage {
+  status?: number
+  signatures?: Signature[]
+  blame?: Blame
+}
 
 export const buildUrl = (destChain: string) => {
   return env.ETHEREUM_BACKEND_ENDPOINT;
@@ -54,6 +66,12 @@ export const getDepositAddress = async (userAddress: string, destChain: string) 
 export const getDeposits = async (userAddress: string, destChain: string) => {
   let url = buildUrl(destChain) + "/eligible/" + userAddress;
   let settings = { method: "Get" };
-
   return fetch(url, settings).then(res => res.json() as DepositsMessage);
+};
+
+export const getKeySignatures = async (userAddress: string, txid: string, n: number, destChain: string) => {
+  let url = buildUrl(destChain) + "/mint/" + userAddress + "/" + txid + "/" + n;
+  console.log(url)
+  let settings = { method: "Get" };
+  return fetch(url, settings).then(res => res.json() as SignatureMessage);
 };

@@ -2,7 +2,7 @@ import { Divider, IconButton } from "@material-ui/core";
 import {
   GatewaySession,
 } from "@renproject/ren-tx";
-import {getDeposits, DepositEntry} from "../../../services/bridge"
+import {getDeposits, DepositEntry, Signature, SignatureMessage, getKeySignatures} from "../../../services/bridge"
 import React, {
   FunctionComponent,
   useCallback,
@@ -35,6 +35,7 @@ import { paths } from "../../../pages/routes";
 import { useNotifications } from "../../../providers/Notifications";
 import { usePageTitle, usePaperTitle } from "../../../providers/TitleProviders";
 import {
+  BridgeChainConfig,
   getChainConfigByRentxName,
   getCurrencyConfigByRentxName,
 } from "../../../utils/assetConfigs";
@@ -75,6 +76,7 @@ import {
 import {
   useAuthRequired,
   useSelectedChainWallet,
+  useRedeem
 } from "../../wallet/walletHooks";
 import {
   $chain,
@@ -84,6 +86,7 @@ import {
 import {
   DepositWrapper,
   MultipleDepositsMessage,
+  GenericMessage
 } from "../components/MintHelpers";
 import {
   DestinationPendingStatus,
@@ -99,6 +102,7 @@ import {
 import { useDepositPagination, useMintMachine } from "../mintHooks";
 import { resetMint } from "../mintSlice";
 import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
+import { clearTimeout } from "timers";
 
 
 export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
@@ -260,6 +264,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   const chain = useSelector($chain);
   const renNetwork = useSelector($renNetwork);
   const { account } = useSelectedChainWallet();
+
   const [state, setState] = useState("restoringDeposit" as string)
   const {
     currentIndex,
@@ -270,32 +275,67 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   } = useDepositPagination(tx, depositHash, updateHash);
 
 
-
+  var SigDict: { [id: string]: SignatureMessage; } = {}
 
   const { showNotification, closeNotification } = useNotifications();
-  const [signatures, setSignatures] = useState({})
+  const [signatures, setSignatures] = useState(SigDict)
+  const [timeOut, setTimeOut] = useState(0)
+  let timeoutTimer: any = undefined
+
+  const timeoutFunc = () =>
+  {
+    setTimeOut(timeOut+1)
+  }
 
   useEffect(() => {
     // here we decide on the transaction status
     const dep: DepositEntry = tx.transactions[depositHash]
+
+    if(timeoutTimer!==undefined){
+      clearTimeout(timeoutTimer)
+      timeoutTimer = undefined
+    }
+
     if(dep){
       const confs = dep?.good || false
       if(!confs) 
         setState("srcSettling")
       else {
-        if(1==1 || depositHash in signatures){
+        if(depositHash in signatures){
           setState("accepted")
         }else{
           setState("srcConfirmed")
-          // dispatch signature request
+          submitSignRequest()
+          timeoutTimer = setTimeout(timeoutFunc, 12000)
         }
         
       }
     }
-  },[tx, depositHash, signatures]);
+  },[tx, depositHash, signatures, timeOut]);
 
-  const submitToBridge = () => {
+  const submitToBridge = async() => {
       console.log("Submitting via Wallet Provider")
+      let res: any = await getSignatures(tx.destAddress, depositHash.split(":")[0], parseInt(depositHash.split(":")[1]), activeDeposit?.vout?.value_satoshi || 0, tx.sourceAsset, "0x645f0acb8a98b92d55095839e1815e440adb3f52fa204be3b6af28df5eb6ee4b","0x31f1aa134ef4e27cc74c7b140d4d91b57c6217ba97f6f72dc2b1bd887638187c", 1 + 27)
+      if(res.err!==null && res.err?.code != 0) {
+        console.log(res.err?.message)
+        showNotification(res.err?.message as string || "", {
+          variant: "error",
+          persist: false,
+        });
+      }else{
+        
+      }
+  }
+
+  const submitSignRequest = async() => {
+    console.log("Submitting Signing Request")
+    getKeySignatures(tx.destAddress, (activeDeposit?.vout?.txid || "").replace("0x",""), activeDeposit?.vout?.n || 0, tx.destChain).then((sigs) => {
+      if(sigs && sigs?.status == 1){
+        let sigCopy = JSON.parse(JSON.stringify(signatures))
+        sigCopy[depositHash] = sigs
+        setSignatures(sigCopy)
+      }
+    }).catch((err) => {})
   }
 
   useEffect(() => {
@@ -344,6 +384,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
     }
     return deposit;
   }, [currentHash, tx, depositHash]);
+
+  const {getSignatures} = useRedeem()
+
 
   // In order to enable quick restoration, we need to persist the deposit transaction
   // We persist via querystring, so lets check if the transaction is present

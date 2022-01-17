@@ -1,8 +1,12 @@
 import { RenNetwork } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
+import { env } from "process";
+import { env as SS } from "../../constants/environmentVariables";
+
 import { useCallback, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Web3 from "web3";
+import { AbiItem } from 'web3-utils'
 import {
   WalletConnectionStatusType,
   WalletStatus,
@@ -102,9 +106,483 @@ export const useSyncMultiwalletNetwork = () => {
 
 const SIGN_MESSAGE = "You are not supposed to do this!!";
 
-const sendRedeemTx = async () => {
+const ABI = [
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "string",
+        "name": "_to",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "bridge",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "_value",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "extradata",
+        "type": "uint256"
+      }
+    ],
+    "name": "DepositToDefichain",
+    "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "spent_outputs",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "name": "supported_bridges",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "new_owner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      }
+    ],
+    "name": "addNewToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      }
+    ],
+    "name": "removeToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "bridge",
+        "type": "string"
+      }
+    ],
+    "name": "haveBridge",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "targetAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "txid",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "n",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "bridge",
+        "type": "string"
+      }
+    ],
+    "name": "messageToSign",
+    "outputs": [
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "targetAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "txid",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "n",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "bridge",
+        "type": "string"
+      }
+    ],
+    "name": "hashToSign",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "targetAddress",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "bridge",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "burnToken",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "targetAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "txid",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "n",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "bridge",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "signature_r",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "signature_s",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint8",
+        "name": "signature_v",
+        "type": "uint8"
+      }
+    ],
+    "name": "whoSignedThis",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "targetAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "txid",
+        "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "n",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "bridge",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "signature_r",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "signature_s",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint8",
+        "name": "signature_v",
+        "type": "uint8"
+      }
+    ],
+    "name": "mintToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "in_signer",
+        "type": "address"
+      }
+    ],
+    "name": "initialize_gateway",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "new_signer",
+        "type": "address"
+      }
+    ],
+    "name": "newSigner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "precisionRebase",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function",
+    "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "reducePrecision",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function",
+    "constant": true
+  }
+];
 
+// TODO TBD: cache for more wallet providers?
+const useWeb3 = () => {
+  const { provider } = useSelectedChainWallet();
+  return useMemo(() => new Web3(provider), [provider]);
+};
+const sendRedeemTxHook = async (address: string,
+  web3: Web3,
+  chain: RenChain, targetAddress: string, txid: string, n: number, amount: number, bridge: string, r: string, s: string,v: number) => {
+    console.log("Remeeding",txid,n,"via",SS.ETH_CONTRACT_ADDRESS,"on",bridge)
+    
+    if (chain === RenChain.ethereum || (web3.currentProvider as any).connection.isMetaMask) {
+        let myContract = new web3.eth.Contract(ABI as AbiItem[], SS.ETH_CONTRACT_ADDRESS);
+        let response = await myContract.methods.mintToken(targetAddress, txid, n, amount, bridge, r, s, v).send({from: address});
+        return response
+    }
 }
+
+
+export const useRedeem = () => {
+  const chain = useSelector($multiwalletChain);
+  const { account, status } = useWallet(chain);
+  const web3 = useWeb3();
+  const dispatch = useDispatch();
+  const getSignatures = useCallback(async (targetAddress: string, txid: string, n: number, amount: number, bridge: string, r: string, s: string,v: number) => {
+    amount = amount - 0.1*10000000 // TODO make 0.1 fee variable
+    if (account && web3 && status === "connected") {
+      try {
+        console.log(targetAddress, txid, n, amount, bridge.toUpperCase(), r, s, v)
+        
+        const signatures = await sendRedeemTxHook(account, web3, chain, targetAddress, txid, n, amount, bridge.toUpperCase(), r, s, v);
+        return null
+      } catch (error) {
+        // FIXME: dispatch some error here to handle in UI
+        return {err:error, result:null};
+      }
+    }
+    return {err:{code:-1, message:"something went wrong"}, result:null}
+  }, [account, web3, status, chain, dispatch]);
+
+  return { getSignatures };
+};
 
 const getWeb3Signatures = async (
   address: string,
@@ -152,12 +630,6 @@ const getWeb3Signatures = async (
     localStorage.setItem(storageKeys.SIG_MAP, JSON.stringify(localSigMap));
   }
   return { signature, rawSignature };
-};
-
-// TODO TBD: cache for more wallet providers?
-const useWeb3 = () => {
-  const { provider } = useSelectedChainWallet();
-  return useMemo(() => new Web3(provider), [provider]);
 };
 
 export const useSignatures = () => {
