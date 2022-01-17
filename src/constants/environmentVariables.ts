@@ -10,7 +10,7 @@ const ETHEREUM_BACKEND_ENDPOINT =
   "http://localhost:8080";
 const BSC_BACKEND_ENDPOINT =
   process.env.BSC_BACKEND_ENDPOINT ||
-  "http://localhost:9080";
+  "http://localhost:8080/binance";
 const FIREBASE_KEY = process.env.REACT_APP_FIREBASE_KEY || null;
 const FIREBASE_PROJECT_ID =
   process.env.REACT_APP_FIREBASE_PROJECT_ID || "ren-auth";
@@ -26,7 +26,7 @@ const WALLETCONNECT_ENABLED = Boolean(
 const BSC_MM_ENABLED = true;
 
 const ETH_CONTRACT_ADDRESS = "0xc5b225271519EF55Fcfe712572b6192fEcB46d76";
-const BSC_CONTRACT_ADDRESS = "";
+const BSC_CONTRACT_ADDRESS = "0xF6182963e97B689f8530aB06A6d7E70302cd94b6";
 
 
 export const env = {

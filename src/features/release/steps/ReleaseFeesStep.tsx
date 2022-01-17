@@ -12,6 +12,8 @@ import {
 } from '../components/ReleaseStatuses'
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
+import { useNotifications } from "../../../providers/Notifications";
+
 import {
   ActionButton,
   ActionButtonWrapper,
@@ -49,6 +51,7 @@ import {
   addTransaction,
   setCurrentTxId,
 } from "../../transactions/transactionsSlice";
+import {useBurn} from "../../wallet/walletHooks"
 import {
   createTxQueryString,
   LocationTxState,
@@ -88,7 +91,8 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   } = useSelector($wallet);
   const renChain = useSelector($multiwalletChain);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
-  
+  const {getBurn} = useBurn()
+
   const currencyConfig = getCurrencyConfig(currency);
   const chainConfig = getChainConfig(chain);
   const destinationCurrency = toReleasedCurrency(currency);
@@ -107,11 +111,28 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     [currency, address, account, renChain, network]
   );
   const canInitializeReleasing = preValidateReleaseTransaction(tx);
+  const { showNotification, closeNotification } = useNotifications();
+  const ue = useEffect(() => {
+    setReleasingInitialized(false);
+  },[releaseTxId])
 
-  const handleConfirm = useCallback(() => {
+  console.log("RELEASE TX", releaseTxId)
+  const handleConfirm = useCallback(async() => {
     setReleasingInitialized(true);
     if (walletConnected) {
-      setReleaseTxId("dd"); // TODO: DO METAFUCK MAGIC HERE!
+      console.log(address, amount, tx.sourceAsset)
+      let res: any = await getBurn(address, amount, tx.sourceAsset)
+      if(res.err!==null && res.err?.code != 0) {
+        console.log(res.err?.message)
+        showNotification(res.err?.message as string || "", {
+          variant: "error",
+          persist: false,
+        });
+      }else{
+        console.log(res);
+        setReleaseTxId("TODO"); // TODO: DO METAFUCK MAGIC HERE!
+
+      }
     } else {
       setReleasingInitialized(false);
       dispatch(setWalletPickerOpened(true));

@@ -550,15 +550,23 @@ const useWeb3 = () => {
 const sendRedeemTxHook = async (address: string,
   web3: Web3,
   chain: RenChain, targetAddress: string, txid: string, n: number, amount: number, bridge: string, r: string, s: string,v: number) => {
-    console.log("Remeeding",txid,n,"via",SS.ETH_CONTRACT_ADDRESS,"on",bridge)
+    console.log("Remeeding",txid,n,"via",chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS,"on",bridge)
     
-    if (chain === RenChain.ethereum || (web3.currentProvider as any).connection.isMetaMask) {
-        let myContract = new web3.eth.Contract(ABI as AbiItem[], SS.ETH_CONTRACT_ADDRESS);
+    if ((web3.currentProvider as any).connection.isMetaMask) {
+        let myContract = new web3.eth.Contract(ABI as AbiItem[], chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS);
         let response = await myContract.methods.mintToken(targetAddress, txid, n, amount, bridge, r, s, v).send({from: address});
         return response
     }
 }
-
+const sendBurnTxHook = async (address: string,
+  web3: Web3,
+  chain: RenChain, targetAddress: string, amount: number, bridge: string) => {    
+    if ((web3.currentProvider as any).connection.isMetaMask) {
+        let myContract = new web3.eth.Contract(ABI as AbiItem[], chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS);
+        let response = await myContract.methods.burnToken(targetAddress, bridge, amount).send({from: address});
+        return response
+    }
+}
 
 export const useRedeem = () => {
   const chain = useSelector($multiwalletChain);
@@ -582,6 +590,31 @@ export const useRedeem = () => {
   }, [account, web3, status, chain, dispatch]);
 
   return { getSignatures };
+};
+
+
+export const useBurn = () => {
+  const chain = useSelector($multiwalletChain);
+  const { account, status } = useWallet(chain);
+  const web3 = useWeb3();
+  const dispatch = useDispatch();
+  const getBurn = useCallback(async (targetAddress: string, amount: number, bridge: string) => {
+    // TODO FIX THIS SHIT amount = amount*1000000000000000000 - 0.1*1000000000000000000 // TODO make 0.1 fee variable
+    amount = amount*100000000 - 0.1*100000000
+    
+    if (account && web3 && status === "connected") {
+      try {
+        const signatures = await sendBurnTxHook(account, web3, chain, targetAddress, amount, bridge.toUpperCase());
+        return {err:null, result:signatures}
+      } catch (error) {
+        // FIXME: dispatch some error here to handle in UI
+        return {err:error, result:null};
+      }
+    }
+    return {err:{code:-1, message:"something went wrong"}, result:null}
+  }, [account, web3, status, chain, dispatch]);
+
+  return { getBurn };
 };
 
 const getWeb3Signatures = async (

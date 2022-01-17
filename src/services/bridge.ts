@@ -54,7 +54,9 @@ export class SignatureMessage {
 }
 
 export const buildUrl = (destChain: string) => {
-  return env.ETHEREUM_BACKEND_ENDPOINT;
+  if (destChain == "ethereum")
+    return env.ETHEREUM_BACKEND_ENDPOINT;
+  else return env.BSC_BACKEND_ENDPOINT;
 }
 export const getDepositAddress = async (userAddress: string, destChain: string) => {
   let url = buildUrl(destChain) + "/deposit/" + userAddress;

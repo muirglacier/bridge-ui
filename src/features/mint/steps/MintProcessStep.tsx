@@ -293,7 +293,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   useEffect(() => {
     // here we decide on the transaction status
     const dep: DepositEntry = tx.transactions[depositHash]
-
+    console.log(dep)
     if(timeoutTimer!==undefined){
       clearTimeout(timeoutTimer)
       timeoutTimer = undefined
@@ -305,15 +305,18 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         setState("srcSettling")
       else {
         if(depositHash in signatures){
-          setState("accepted")
-        }else{
+          console.log(rdtx)
+          console.log(depositHash)
           if(depositHash in rdtx){
             setState("completed")
           }else{
+          setState("accepted")
+          }
+        }else{
+          
             setState("srcConfirmed")
             submitSignRequest()
             timeoutTimer = setTimeout(timeoutFunc, 12000)
-          }
         }
         
       }
@@ -322,7 +325,12 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 
   const submitToBridge = async() => {
       console.log("Submitting via Wallet Provider")
-      let res: any = await getSignatures(tx.destAddress, depositHash.split(":")[0], parseInt(depositHash.split(":")[1]), activeDeposit?.vout?.value_satoshi || 0, tx.sourceAsset, "0x645f0acb8a98b92d55095839e1815e440adb3f52fa204be3b6af28df5eb6ee4b","0x31f1aa134ef4e27cc74c7b140d4d91b57c6217ba97f6f72dc2b1bd887638187c", 1 + 27)
+      const siggy = signatures[depositHash]
+      if(siggy['signatures'] == undefined) return
+      const r = '0x' + siggy['signatures'][0]['r'] || ''
+      const s = '0x' + siggy['signatures'][0]['s'] || ''
+      const v = siggy['signatures'][0]['recovery_id']=="00" ? 0 : 1
+      let res: any = await getSignatures(tx.destAddress, depositHash.split(":")[0], parseInt(depositHash.split(":")[1]), activeDeposit?.vout?.value_satoshi || 0, tx.sourceAsset, r, s, v + 27)
       if(res.err!==null && res.err?.code != 0) {
         console.log(res.err?.message)
         showNotification(res.err?.message as string || "", {
@@ -330,6 +338,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           persist: false,
         });
       }else{
+        console.log(res);
         let rdCopy = JSON.parse(JSON.stringify(rdtx))
         rdCopy[depositHash] = res.result
         setRdtx(rdCopy)
