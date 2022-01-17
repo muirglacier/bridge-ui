@@ -6,6 +6,10 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import {
+  ReleaseShortcutCompletedStatus,
+  ReleaseProgressStatus,
+} from '../components/ReleaseStatuses'
 import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import {
@@ -75,7 +79,8 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const history = useHistory();
   const { account, walletConnected } = useSelectedChainWallet();
   const [releasingInitialized, setReleasingInitialized] = useState(false);
-  const { currency, address } = useSelector($release);
+  const [releaseTxId, setReleaseTxId] = useState("");
+  const { currency, address, amount } = useSelector($release);
   const network = useSelector($renNetwork);
   const {
     chain,
@@ -106,43 +111,32 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const handleConfirm = useCallback(() => {
     setReleasingInitialized(true);
     if (walletConnected) {
-      if (canInitializeReleasing) {
-        setReleasingInitialized(true);
-      } else {
-        setReleasingInitialized(false);
-      }
+      setReleaseTxId("dd"); // TODO: DO METAFUCK MAGIC HERE!
     } else {
       setReleasingInitialized(false);
       dispatch(setWalletPickerOpened(true));
     }
   }, [dispatch, canInitializeReleasing, walletConnected]);
 
-  const onReleaseTxCreated = useCallback(
-    (tx) => {
-      const dbTx = { ...tx };
-      db.addTx(dbTx, account, signature).then(() => {
-        dispatch(setCurrentTxId(tx.id));
-        dispatch(addTransaction(tx));
-        history.push({
-          pathname: paths.RELEASE_TRANSACTION,
-          search: "?" + createTxQueryString(tx),
-          state: {
-            txState: { newTx: true },
-          } as LocationTxState,
-        });
-      });
-    },
-    [dispatch, history, account, signature]
-  );
-
-  useEffect(() => {
-    if (releasingInitialized) {
-      onReleaseTxCreated(tx);
-    }
-  }, [onReleaseTxCreated, releasingInitialized, tx]);
-
+console.log(tx)
+ if (releaseTxId!="")
   return (
     <>
+    <PaperHeader>
+        <PaperNav>
+          <IconButton onClick={onPrev}>
+            <BackArrowIcon />
+          </IconButton>
+        </PaperNav>
+        <PaperTitle>All Done</PaperTitle>
+        <PaperActions />
+      </PaperHeader>
+      <PaperContent bottomPadding>
+      <ReleaseShortcutCompletedStatus txid={releaseTxId} amount={amount} chain={tx.sourceChain} onPrev={onPrev}/>
+      </PaperContent>
+    </>)
+ else return (
+     <>
       <PaperHeader>
         <PaperNav>
           <IconButton onClick={onPrev}>
@@ -152,12 +146,13 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
         <PaperTitle>Fees & Confirm</PaperTitle>
         <PaperActions />
       </PaperHeader>
+
       <PaperContent bottomPadding>
         <BigAssetAmountWrapper>
           <BigAssetAmount
             value={
               <NumberFormatText
-                value={0}
+                value={amount}
                 spacedSuffix={currencyConfig.short}
               />
             }
@@ -171,16 +166,8 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           labelTooltip={releaseTooltips.releasing}
           value={
             <NumberFormatText
-              value={0}
+              value={amount}
               spacedSuffix={currencyConfig.short}
-            />
-          }
-          valueEquivalent={
-            <NumberFormatText
-              value={0}
-              spacedSuffix="USD"
-              decimalScale={2}
-              fixedDecimalScale
             />
           }
         />
@@ -206,30 +193,6 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       </PaperContent>
       <Divider />
       <PaperContent darker topPadding bottomPadding>
-        {walletConnected &&
-          (pending ? (
-            <CenteredProgress />
-          ) : (
-            <AssetInfo
-              label="Receiving"
-              value={
-                <NumberFormatText
-                  value={0}
-                  spacedSuffix={destinationCurrencyConfig.short}
-                />
-              }
-              valueEquivalent={
-                <NumberFormatText
-                  prefix=" = $"
-                  value={0}
-                  spacedSuffix="USD"
-                  decimalScale={2}
-                  fixedDecimalScale
-                />
-              }
-              Icon={<MainIcon fontSize="inherit" />}
-            />
-          ))}
         <ActionButtonWrapper>
           <ActionButton onClick={handleConfirm} disabled={releasingInitialized}>
             {!walletConnected

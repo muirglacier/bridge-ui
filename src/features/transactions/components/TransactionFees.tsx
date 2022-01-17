@@ -63,7 +63,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     chain,
   });
 
-  const feeInGwei = 1337; // gas price to real gas price adjustment
+  const feeInGwei = 1337; // TODO: gas price to real gas price adjustment
   const targetChainFeeNative = fromGwei(feeInGwei);
   const targetChainCurrency = getCurrencyConfig(
     targetChainConfig.nativeCurrency
@@ -102,13 +102,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
       <LabelWithValue
         label={`Esti. ${targetChainConfig.short} Fee`}
         labelTooltip={tooltips.renCurrencyChainFee}
-        value={
-          <NumberFormatText
-            value={targetChainFeeNative}
-            spacedSuffix={targetChainCurrency.short}
-            decimalScale={4}
-          />
-        }
+        value={"See Metamask"}
       />
       {address && (
         <LabelWithValue

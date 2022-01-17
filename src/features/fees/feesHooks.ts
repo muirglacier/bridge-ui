@@ -21,8 +21,8 @@ export const useFetchFees = (currency: BridgeCurrency, txType: TxType) => {
   const initialFees: SimpleFee = {
     mint: 20,
     burn: 20,
-    lock: 10,
-    release: 10,
+    lock: 1000000,
+    release: 1000000,
   };
   const [fees, setFees] = useState(initialFees);
   const [pending, setPending] = useState(false);

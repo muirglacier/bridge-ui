@@ -357,16 +357,20 @@ export const DestinationPendingStatus: FunctionComponent<DestinationPendingStatu
 type MintCompletedStatusProps = {
   tx: GatewaySession;
   depositHash: string;
+  mintHash: string;
+  chain: string;
 };
 
 export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = ({
   tx,
   depositHash,
+  mintHash,
+  chain
 }) => {
   useSetPaperTitle("Complete");
   const dispatch = useDispatch();
   const history = useHistory();
-  const {
+  let {
     lockCurrencyConfig,
     mintCurrencyConfig,
     lockChainConfig,
@@ -375,6 +379,14 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
     mintTxLink,
     mintChainConfig,
   } = getLockAndMintParams(tx, depositHash);
+
+  lockTxLink = "https://defiscan.live/transactions/" + depositHash.split(":")[0]
+  if(chain == "ethereum"){
+    mintTxLink="https://etherscan.io/tx/" + mintHash
+  }else{
+    mintTxLink="https://bscscan.com/tx/" + mintHash
+  }
+
   const { fees, pending } = useFetchFees(
     lockCurrencyConfig.symbol,
     TxType.MINT
@@ -393,7 +405,7 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
 
   const showNotifications = useCallback(() => {
     if (!pending) {
-      const notificationMessage = `Successfully minted ${conversionTotal} ${mintCurrencyConfig.short} on ${mintChainConfig.full}.`;
+      const notificationMessage = `Successfully minted ${mintCurrencyConfig.short} on ${mintChainConfig.full}.`;
       showNotification(
         <span>
           {notificationMessage}{" "}
@@ -423,14 +435,6 @@ export const MintCompletedStatus: FunctionComponent<MintCompletedStatusProps> = 
           <BigDoneIcon />
         </ProgressWithContent>
       </ProgressWrapper>
-      <Typography variant="body1" align="center" gutterBottom>
-        You received{" "}
-        <NumberFormatText
-          value={conversionTotal}
-          spacedSuffix={mintCurrencyConfig.short}
-        />
-        !
-      </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={handleReturn}>Back to start</ActionButton>
       </ActionButtonWrapper>

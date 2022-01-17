@@ -572,7 +572,7 @@ export const useRedeem = () => {
         console.log(targetAddress, txid, n, amount, bridge.toUpperCase(), r, s, v)
         
         const signatures = await sendRedeemTxHook(account, web3, chain, targetAddress, txid, n, amount, bridge.toUpperCase(), r, s, v);
-        return null
+        return {err:null, result:signatures}
       } catch (error) {
         // FIXME: dispatch some error here to handle in UI
         return {err:error, result:null};

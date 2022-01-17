@@ -156,6 +156,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   const [counter, changeCounter] = useState(0);
 
   const updateTx = () => {
+    if(!tx) return;
     getDeposits(tx.userAddress, tx.destChain).then((jsonObj) => {
     let txChange: GatewaySession = JSON.parse(JSON.stringify(tx));
     if(jsonObj.status == 1) {
@@ -165,7 +166,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
               const key = jsonObj.result.data[i].vout?.txid + ":" + jsonObj.result.data[i].vout?.n as string
               const result = (key in txChange.transactions)
               if(!result){
-                txChange.transactions[key] = jsonObj.result.data[i]
+                (txChange as any).transactions[key] = jsonObj.result.data[i]
                 changes = true;
               }
             }
@@ -276,9 +277,11 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
 
 
   var SigDict: { [id: string]: SignatureMessage; } = {}
+  var rdDict: { [id: string]: string; } = {}
 
   const { showNotification, closeNotification } = useNotifications();
   const [signatures, setSignatures] = useState(SigDict)
+  const [rdtx, setRdtx] = useState(rdDict)
   const [timeOut, setTimeOut] = useState(0)
   let timeoutTimer: any = undefined
 
@@ -304,14 +307,18 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
         if(depositHash in signatures){
           setState("accepted")
         }else{
-          setState("srcConfirmed")
-          submitSignRequest()
-          timeoutTimer = setTimeout(timeoutFunc, 12000)
+          if(depositHash in rdtx){
+            setState("completed")
+          }else{
+            setState("srcConfirmed")
+            submitSignRequest()
+            timeoutTimer = setTimeout(timeoutFunc, 12000)
+          }
         }
         
       }
     }
-  },[tx, depositHash, signatures, timeOut]);
+  },[tx, depositHash, signatures, rdtx, timeOut]);
 
   const submitToBridge = async() => {
       console.log("Submitting via Wallet Provider")
@@ -323,7 +330,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           persist: false,
         });
       }else{
-        
+        let rdCopy = JSON.parse(JSON.stringify(rdtx))
+        rdCopy[depositHash] = res.result
+        setRdtx(rdCopy)
       }
   }
 
@@ -375,7 +384,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   const activeDeposit = useMemo<
     DepositEntry
    | null>(() => {
-    if (!tx.transactions || tx.transactions.length == 0) {
+    if ((tx?.transactions === undefined)) {
       return null;
     }
     const deposit = tx.transactions[currentHash || depositHash];
@@ -429,6 +438,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
             depositHash={depositHash}
             state={state}
             submitter={submitToBridge}
+            mintHash={rdtx[depositHash]}
           />
           {total > 1 && (
             <>
@@ -475,6 +485,7 @@ type MintTransactionDepositStatusProps = {
   depositHash: string;
   state: string;
   submitter: ()=>void
+  mintHash: string;
 };
 
 
@@ -484,6 +495,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
   depositHash,
   state,
   submitter,
+  mintHash,
 }) => {
   const history = useHistory();
   const location = useLocation();
@@ -521,18 +533,7 @@ export const MintTransactionDepositStatus: FunctionComponent<MintTransactionDepo
         />
       );
     case "completed":
-      //if (deposit.destTxHash) {
-      //  return <MintCompletedStatus tx={tx} depositHash={depositHash} />;
-      //} else {
-        // FIXME: actually an error case, this shouldn't happen in this state
-        return (
-          <DestinationPendingStatus
-            tx={tx}
-            depositHash={depositHash}
-            submitting={true}
-          />
-        );
-      //}
+      return <MintCompletedStatus tx={tx} depositHash={depositHash} mintHash={mintHash} chain={tx.destChain}/>;
     case "restoringDeposit":
       return <ProgressStatus reason="Restoring deposit" />;
     default:

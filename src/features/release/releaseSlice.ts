@@ -6,11 +6,13 @@ import { BridgeCurrency } from "../../utils/assetConfigs";
 type ReleaseState = {
   currency: BridgeCurrency;
   address: string;
+  amount: number;
 };
 
 let initialState: ReleaseState = {
   currency: BridgeCurrency.RENDFI,
   address: "", // mzseycKNBVKFW1PjzisnPER226bJsGfnUh
+  amount: 0,
 };
 
 const slice = createSlice({
@@ -22,6 +24,9 @@ const slice = createSlice({
     },
     setReleaseAddress(state, action: PayloadAction<string>) {
       state.address = action.payload;
+    },
+    setReleaseAmount(state, action: PayloadAction<string>) {
+      state.amount = parseFloat(action.payload) || 0;
     },
     resetRelease(state, action: PayloadAction<ReleaseState | undefined>) {
       if (action.payload) {
@@ -37,6 +42,7 @@ const slice = createSlice({
 export const {
   setReleaseCurrency,
   setReleaseAddress,
+  setReleaseAmount,
   resetRelease,
 } = slice.actions;
 

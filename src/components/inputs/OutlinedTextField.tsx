@@ -43,3 +43,8 @@ export const BigOutlinedTextFieldWrapper = styled("div")({
   marginTop: 50,
   marginBottom: 25,
 });
+
+export const SmallOutlinedTextFieldWrapper = styled("div")({
+  marginTop: 0,
+  marginBottom: 25,
+});

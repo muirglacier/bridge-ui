@@ -12,7 +12,7 @@ import {
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import {
   OutlinedTextField,
-  BigOutlinedTextFieldWrapper,
+  BigOutlinedTextFieldWrapper,SmallOutlinedTextFieldWrapper
 } from "../../../components/inputs/OutlinedTextField";
 import {
   BigCurrencyInput,
@@ -54,6 +54,7 @@ import {
   $release,
   setReleaseAddress,
   setReleaseCurrency,
+  setReleaseAmount,
 } from "../releaseSlice";
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
@@ -63,7 +64,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const { walletConnected } = useSelectedChainWallet();
   const { chain, balances } = useSelector($wallet);
   const network = useSelector($renNetwork);
-  const { currency, address } = useSelector($release);
+  const { currency, address, amount } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
   useRenNetworkTracker(currency);
   useFetchBalances(supportedReleaseCurrencies);
@@ -86,6 +87,13 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const handleAddressChange = useCallback(
     (event) => {
       dispatch(setReleaseAddress(event.target.value));
+    },
+    [dispatch]
+  );
+  
+  const handleAmountChange = useCallback(
+    (event) => {
+      dispatch(setReleaseAmount(event.target.value));
     },
     [dispatch]
   );
@@ -119,9 +127,9 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const hasBalance = balance !== null;
   let enabled;
   if (walletConnected) {
-    enabled = basicCondition && hasBalance;
+    enabled = basicCondition && amount>0; // TODO: also check balance here
   } else {
-    enabled = basicCondition;
+    enabled = basicCondition && amount>0;
   }
   const showMinimalAmountError =
     walletConnected && !pending;
@@ -165,17 +173,19 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             value={address}
           />
         </BigOutlinedTextFieldWrapper>
+        <SmallOutlinedTextFieldWrapper>
+          <OutlinedTextField
+            error={!!address && !isAddressValid}
+            placeholder={`Enter an Amount ${releaseChainConfig.full} Address`}
+            label="Amount to Burn/Transfer"
+            onChange={handleAmountChange}
+            
+
+          />
+        </SmallOutlinedTextFieldWrapper>
       </PaperContent>
       <Divider />
       <PaperContent darker topPadding bottomPadding>
-        {walletConnected &&
-          (pending ? (
-            <CenteredProgress />
-          ) : (
-            <LabelWithValue
-            label={"FUCKY FUCKI"}
-            value={0}/>
-          ))}
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleNextStep}

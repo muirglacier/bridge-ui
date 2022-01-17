@@ -116,6 +116,14 @@ type ReleaseCompletedStatusProps = {
   onReturn?: () => void;
 };
 
+type ReleaseShortcutCompletedStatusProps = {
+  txid: string;
+  amount: number;
+  chain: string;
+  onPrev?: () => void;
+  onReturn?: () => void;
+};
+
 export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusProps> = ({
   tx,
 }) => {
@@ -159,7 +167,7 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
         </ProgressWithContent>
       </ProgressWrapper>
       <ActionButtonWrapper>
-        <ActionButton onClick={handleReturn}>Back to start</ActionButton>
+        <ActionButton onClick={handleReturn}>Back to Start</ActionButton>
       </ActionButtonWrapper>
       <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
         <Link
@@ -182,6 +190,65 @@ export const ReleaseCompletedStatus: FunctionComponent<ReleaseCompletedStatusPro
         </Link>
       </Box>
       <Debug it={{ tx }} />
+    </>
+  );
+};
+
+
+export const ReleaseShortcutCompletedStatus: FunctionComponent<ReleaseShortcutCompletedStatusProps> = ({
+  txid,
+  amount,
+  chain,
+  onPrev
+}) => {
+  useSetPaperTitle("Completed");
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const handleReturn = useCallback(() => {
+    if(onPrev)
+    	onPrev();
+    dispatch(resetRelease());
+  }, [dispatch, history]);
+  const notificationMessage = `Successfully released`;
+  const { showNotification } = useNotifications();
+  const { showBrowserNotification } = useBrowserNotifications();
+  
+  const releaseTxLink = (chain=="ethereum") ? "http://google.com/" + txid : "http://yahoo.com/" + txid;
+  
+  useEffectOnce(() => {
+    showNotification(
+      <span>
+        {notificationMessage}{" "}
+        <Link external href={releaseTxLink}>
+          View Transaction
+        </Link>
+      </span>
+    );
+    showBrowserNotification(notificationMessage);
+  });
+
+  return (
+    <>
+      <ProgressWrapper>
+        <ProgressWithContent>
+          <BigDoneIcon />
+        </ProgressWithContent>
+      </ProgressWrapper>
+      <ActionButtonWrapper>
+        <ActionButton onClick={handleReturn}>Back to Start</ActionButton>
+      </ActionButtonWrapper>
+      <Box display="flex" justifyContent="space-between" flexWrap="wrap" py={2}>
+        <Link
+          external
+          color="primary"
+          variant="button"
+          underline="hover"
+          href={releaseTxLink}
+        >
+          View Transaction on Block Explorer
+        </Link>
+      </Box>
+
     </>
   );
 };
