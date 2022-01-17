@@ -212,9 +212,12 @@ export const ReleaseShortcutCompletedStatus: FunctionComponent<ReleaseShortcutCo
   const notificationMessage = `Successfully released`;
   const { showNotification } = useNotifications();
   const { showBrowserNotification } = useBrowserNotifications();
-  
-  const releaseTxLink = (chain=="ethereum") ? "http://google.com/" + txid : "http://yahoo.com/" + txid;
-  
+  let releaseTxLink: string;
+  if(chain == "ethereum"){
+    releaseTxLink="https://etherscan.io/tx/" + txid
+  }else{
+    releaseTxLink="https://bscscan.com/tx/" + txid
+  }  
   useEffectOnce(() => {
     showNotification(
       <span>

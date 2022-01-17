@@ -165,7 +165,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
             for(let i = 0; i<jsonObj.result.data.length; ++i) {
               const key = jsonObj.result.data[i].vout?.txid + ":" + jsonObj.result.data[i].vout?.n as string
               const result = (key in txChange.transactions)
-              if(!result){
+              if(!result || JSON.stringify(txChange.transactions[key])!=JSON.stringify(jsonObj.result.data[i])){
                 (txChange as any).transactions[key] = jsonObj.result.data[i]
                 changes = true;
               }
