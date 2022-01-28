@@ -112,26 +112,21 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   );
   const canInitializeReleasing = preValidateReleaseTransaction(tx);
   const { showNotification, closeNotification } = useNotifications();
-  const ue = useEffect(() => {
-    setReleasingInitialized(false);
-  },[releaseTxId])
 
-  console.log("RELEASE TX", releaseTxId)
   const handleConfirm = useCallback(async() => {
     setReleasingInitialized(true);
     if (walletConnected) {
-      console.log(address, amount, tx.sourceAsset)
       let res: any = await getBurn(address, amount, tx.sourceAsset)
+      console.log(res)
       if(res.err!==null && res.err?.code != 0) {
-        console.log(res.err?.message)
+        setReleasingInitialized(false);
         showNotification(res.err?.message as string || "", {
           variant: "error",
           persist: false,
         });
       }else{
-        console.log(res);
-        setReleaseTxId("TODO"); // TODO: DO METAFUCK MAGIC HERE!
-
+        setReleasingInitialized(false);
+        setReleaseTxId(res.result); // TODO: DO METAFUCK MAGIC HERE!
       }
     } else {
       setReleasingInitialized(false);
@@ -139,7 +134,6 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     }
   }, [dispatch, canInitializeReleasing, walletConnected]);
 
-console.log(tx)
  if (releaseTxId!="")
   return (
     <>

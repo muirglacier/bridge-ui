@@ -549,23 +549,28 @@ const useWeb3 = () => {
 };
 const sendRedeemTxHook = async (address: string,
   web3: Web3,
-  chain: RenChain, targetAddress: string, txid: string, n: number, amount: number, bridge: string, r: string, s: string,v: number) => {
-    console.log("Remeeding",txid,n,"via",chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS,"on",bridge)
-    
+  chain: RenChain, targetAddress: string, txid: string, n: number, amount: number, bridge: string, r: string, s: string,v: number) => {    
+    return new Promise((resolve, reject) => {
+
     if ((web3.currentProvider as any).connection.isMetaMask) {
         let myContract = new web3.eth.Contract(ABI as AbiItem[], chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS);
-        let response = await myContract.methods.mintToken(targetAddress, txid, n, amount, bridge, r, s, v).send({from: address});
-        return response
+        myContract.methods.mintToken(targetAddress, txid, n, amount, bridge, r, s, v).send({from: address}).on('transactionHash', resolve)
+        .on('error', reject);;
     }
+  })
 }
 const sendBurnTxHook = async (address: string,
   web3: Web3,
   chain: RenChain, targetAddress: string, amount: number, bridge: string) => {    
+
+   return new Promise((resolve, reject) => {
+
     if ((web3.currentProvider as any).connection.isMetaMask) {
         let myContract = new web3.eth.Contract(ABI as AbiItem[], chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS);
-        let response = await myContract.methods.burnToken(targetAddress, bridge, amount).send({from: address});
-        return response
+        let response = myContract.methods.burnToken(targetAddress, bridge, amount).send({from: address}).on('transactionHash', resolve)
+        .on('error', reject);;
     }
+  })
 }
 
 export const useRedeem = () => {
@@ -578,11 +583,9 @@ export const useRedeem = () => {
     if (account && web3 && status === "connected") {
       try {
         console.log(targetAddress, txid, n, amount, bridge.toUpperCase(), r, s, v)
-        
         const signatures = await sendRedeemTxHook(account, web3, chain, targetAddress, txid, n, amount, bridge.toUpperCase(), r, s, v);
         return {err:null, result:signatures}
       } catch (error) {
-        // FIXME: dispatch some error here to handle in UI
         return {err:error, result:null};
       }
     }
@@ -607,7 +610,6 @@ export const useBurn = () => {
         const signatures = await sendBurnTxHook(account, web3, chain, targetAddress, amount, bridge.toUpperCase());
         return {err:null, result:signatures}
       } catch (error) {
-        // FIXME: dispatch some error here to handle in UI
         return {err:error, result:null};
       }
     }
