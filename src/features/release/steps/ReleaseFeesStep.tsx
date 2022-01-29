@@ -51,7 +51,7 @@ import {
   addTransaction,
   setCurrentTxId,
 } from "../../transactions/transactionsSlice";
-import {useBurn} from "../../wallet/walletHooks"
+import {useBurn, useToken} from "../../wallet/walletHooks"
 import {
   createTxQueryString,
   LocationTxState,

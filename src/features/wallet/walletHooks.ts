@@ -547,6 +547,8 @@ const useWeb3 = () => {
   const { provider } = useSelectedChainWallet();
   return useMemo(() => new Web3(provider), [provider]);
 };
+
+
 const sendRedeemTxHook = async (address: string,
   web3: Web3,
   chain: RenChain, targetAddress: string, txid: string, n: number, amount: number, bridge: string, r: string, s: string,v: number) => {    
@@ -559,12 +561,39 @@ const sendRedeemTxHook = async (address: string,
     }
   })
 }
+
+const addTokenHook = async (web3: Web3, chain: RenChain) => {    
+    return new Promise((resolve, reject) => {
+      if ((web3.currentProvider as any).connection.isMetaMask) {
+        (web3.currentProvider as any).connection
+        .request({
+          method: 'wallet_watchAsset',
+          params: {
+            type: 'ERC20',
+            options: {
+              address: chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS,
+              symbol: 'brDFI',
+              decimals: 18,
+              image: 'https://cryptologos.cc/logos/defichain-dfi-logo.svg?v=018',
+            },
+          },
+        }, (err: any, added: any) => {
+          console.log('provider returned', err, added)
+          if (err || 'error' in added) {
+              reject("error")
+          } else {
+              resolve("good")
+          }
+      })
+      }
+  })
+}
+
 const sendBurnTxHook = async (address: string,
   web3: Web3,
   chain: RenChain, targetAddress: string, amount: number, bridge: string) => {    
 
-   return new Promise((resolve, reject) => {
-
+  return new Promise((resolve, reject) => {
     if ((web3.currentProvider as any).connection.isMetaMask) {
         let myContract = new web3.eth.Contract(ABI as AbiItem[], chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS);
         let response = myContract.methods.burnToken(targetAddress, bridge, amount).send({from: address}).on('transactionHash', resolve)
@@ -593,6 +622,26 @@ export const useRedeem = () => {
   }, [account, web3, status, chain, dispatch]);
 
   return { getSignatures };
+};
+
+export const useToken = () => {
+  const chain = useSelector($multiwalletChain);
+  const { account, status } = useWallet(chain);
+  const web3 = useWeb3();
+  const dispatch = useDispatch();
+  const getToken = useCallback(async () => {
+    if (account && web3 && status === "connected") {
+      try {
+        const signatures = await addTokenHook(web3, chain);
+        return {err:null, result:signatures}
+      } catch (error) {
+        return {err:error, result:null};
+      }
+    }
+    return {err:{code:-1, message:"something went wrong"}, result:null}
+  }, [account, web3, status, chain, dispatch]);
+
+  return { getToken };
 };
 
 

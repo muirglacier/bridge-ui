@@ -1,4 +1,4 @@
-import { Divider, Fade } from "@material-ui/core";
+import { Divider, Fade, Typography } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -164,6 +164,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             onChange={handleCurrencyChange}
           />
         </AssetDropdownWrapper>
+       
         <BigOutlinedTextFieldWrapper>
           <OutlinedTextField
             error={!!address && !isAddressValid}

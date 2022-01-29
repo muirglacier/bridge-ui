@@ -10,6 +10,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useLocalStorage } from 'usehooks-ts'
 import { useDispatch, useSelector } from "react-redux";
 import { RouteComponentProps, useHistory, useLocation } from "react-router-dom";
 import { Actor } from "xstate";
@@ -112,6 +113,12 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   useAuthRequired(true);
   const dispatch = useDispatch();
   const chain = useSelector($chain);
+  var rdDict: { [id: string]: string; } = {
+    "bcc207a0e3745b9b4394e0daa6c098edc4224cb28379505c70b8407d73738905:0": "skip"
+  }
+
+  const [rdtx, setRdtx] = useLocalStorage('rdDict', rdDict)
+
   
   const { walletConnected } = useSelectedChainWallet();
   const { tx: parsedTx, txState } = useTxParam();
@@ -164,6 +171,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
         if(jsonObj.result !== undefined && jsonObj.result.data !== undefined && jsonObj.result.data.length > 0) {
             for(let i = 0; i<jsonObj.result.data.length; ++i) {
               const key = jsonObj.result.data[i].vout?.txid + ":" + jsonObj.result.data[i].vout?.n as string
+              if(key in rdtx) continue
               const result = (key in txChange.transactions)
               if(!result || JSON.stringify(txChange.transactions[key])!=JSON.stringify(jsonObj.result.data[i])){
                 (txChange as any).transactions[key] = jsonObj.result.data[i]
@@ -212,6 +220,8 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
             tx={tx}
             depositHash={depositHash}
             updateHash={updateHash}
+            rdtx={rdtx}
+            setRdtx={setRdtx}
           />
         )}
         {!walletConnected && (
@@ -255,12 +265,16 @@ type MintTransactionStatusProps = {
   tx: GatewaySession;
   depositHash?: string;
   updateHash: (arg0: string) => void
+  rdtx: any
+  setRdtx: any
 };
 
 const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   tx,
   depositHash = "",
-  updateHash
+  updateHash,
+  rdtx,
+  setRdtx
 }) => {
   const chain = useSelector($chain);
   const renNetwork = useSelector($renNetwork);
@@ -276,12 +290,11 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
   } = useDepositPagination(tx, depositHash, updateHash);
 
 
+
   var SigDict: { [id: string]: SignatureMessage; } = {}
-  var rdDict: { [id: string]: string; } = {}
 
   const { showNotification, closeNotification } = useNotifications();
   const [signatures, setSignatures] = useState(SigDict)
-  const [rdtx, setRdtx] = useState(rdDict)
   const [timeOut, setTimeOut] = useState(0)
   let timeoutTimer: any = undefined
 
@@ -310,10 +323,9 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
           if(depositHash in rdtx){
             setState("completed")
           }else{
-          setState("accepted")
+            setState("accepted")
           }
         }else{
-          
             setState("srcConfirmed")
             submitSignRequest()
             timeoutTimer = setTimeout(timeoutFunc, 12000)
@@ -322,6 +334,8 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
       }
     }
   },[tx, depositHash, signatures, rdtx, timeOut]);
+  
+
 
   const submitToBridge = async() => {
       console.log("Submitting via Wallet Provider")

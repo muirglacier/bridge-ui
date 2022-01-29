@@ -228,7 +228,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
 
   lockTargetConfirmations = lockChainConfig?.targetConfirmations || 0
 
-  const notificationMessage = `${lockConfirmations}/${lockTargetConfirmations} confirmations, ready to submit ${
+  const notificationMessage = `${lockConfirmations>lockTargetConfirmations?lockTargetConfirmations:lockConfirmations}/${lockTargetConfirmations} confirmations, ready to submit ${
     lockCurrencyConfig.short
   } to ${mintChainConfig.full}?`;
   const { showNotification } = useNotifications();
@@ -262,7 +262,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           value={lockTxAmount}
           spacedSuffix={lockCurrencyConfig.full}
         />{" "}
-        Received {lockConfirmations}/{lockTargetConfirmations} Confirmations
+        Received {lockConfirmations>lockTargetConfirmations?lockTargetConfirmations:lockConfirmations}/{lockTargetConfirmations} Confirmations
       </Typography>
       <ActionButtonWrapper>
         <ActionButton onClick={onSubmit} disabled={submitting}>
