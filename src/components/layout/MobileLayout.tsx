@@ -5,7 +5,7 @@ import Toolbar from "@material-ui/core/Toolbar";
 import React, { FunctionComponent, ReactNode, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { HomeMenuIconButton } from "../buttons/Buttons";
-import { BetaIcon, RenBridgeLogoIcon } from "../icons/RenIcons";
+import { BetaIcon, RenBridgeLogoIcon, BridgeLogoIcon } from "../icons/RenIcons";
 import { Footer } from "./Footer";
 
 const headerHeight = 82;
@@ -111,6 +111,7 @@ type MobileLayoutProps = MainLayoutVariantProps & {
   ToolbarMenu?: ReactNode | "";
   DrawerMenu?: ReactNode | "";
   WalletMenu?: ReactNode | "";
+  Logo?: ReactNode | "";
 };
 
 export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
@@ -118,6 +119,7 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
   ToolbarMenu = "",
   DrawerMenu,
   WalletMenu,
+  Logo,
   children,
 }) => {
   const styles = useMobileLayoutStyles();
@@ -130,7 +132,7 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
           <header className={styles.grow}>
             <AppBar position="static" color="transparent">
               <Toolbar>
-                <div className={styles.grow} />
+                <div className={styles.grow}>{Logo}</div>
                 {ToolbarMenu}
               </Toolbar>
             </AppBar>

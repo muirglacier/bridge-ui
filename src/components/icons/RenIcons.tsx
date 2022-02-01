@@ -1,8 +1,9 @@
 import { SvgIcon, SvgIconProps } from "@material-ui/core";
 import { SvgIconComponent } from "@material-ui/icons";
 import React, { FunctionComponent } from "react";
-import { getScalingProps } from "../../utils/icons";
+import { getScalingProps, getScalingPropsFactored } from "../../utils/icons";
 import { ReactComponent as BackArrow } from "./../../assets/icons/back-arrow.svg";
+import { ReactComponent as BridgeLogo } from "./../../assets/logos/DFI_Logo_2.svg";
 import { ReactComponent as Beta } from "./../../assets/icons/icon-beta.svg";
 import { ReactComponent as Defi } from "./../../assets/icons/dfi.svg";
 import { ReactComponent as DefiBr } from "./../../assets/icons/brdfi.svg";
@@ -115,6 +116,12 @@ export const SuccessIcon: CustomSvgIconComponent = (props) => (
 export const SpecialAlertIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={SpecialAlert} {...props} />
 );
+
+export const BridgeLogoIcon: CustomSvgIconComponent = (props) => {
+  const scalingProps = getScalingPropsFactored(850.39, 350.39, 2.5);
+  return<SvgIcon component={BridgeLogo} {...scalingProps} {...props}/>
+};
+
 
 export const QrCodeIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={QrCode} {...props} />

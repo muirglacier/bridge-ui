@@ -4,6 +4,7 @@ import {
   Drawer,
   ListItem,
   Menu,
+  Box,
   MenuItem,
   Typography,
   useTheme,
@@ -70,6 +71,7 @@ import {
   MainLayoutVariantProps,
   useMobileLayoutStyles,
 } from "../components/layout/MobileLayout";
+import { BridgeLogoIcon } from "../components/icons/RenIcons";
 
 export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
@@ -270,6 +272,12 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
     </Drawer>
   );
 
+  const WalletLogo = (
+    <Box display="inline-block" p={3}>
+          <BridgeLogoIcon width="auto" height="auto"/>
+    </Box>
+  );
+
   const WalletMenu = (
     <Menu
       id="wallet-menu"
@@ -286,11 +294,13 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       </MenuItem>
     </Menu>
   );
+
   return (
     <MobileLayout
       ToolbarMenu={ToolbarMenu}
       DrawerMenu={DrawerMenu}
       WalletMenu={WalletMenu}
+      Logo={WalletLogo}
     >
       {children}
       <TransactionHistory />
