@@ -17,6 +17,7 @@ import { useSubNetworkName } from "../../features/ui/uiHooks";
 import { setWalletPickerOpened } from "../../features/wallet/walletSlice";
 import { createPulseAnimation } from "../../theme/animationUtils";
 import { defaultShadow } from "../../theme/other";
+import { useAddBsc } from "../../features/wallet/walletHooks"
 import {
   BridgeChainConfig,
   BridgeWallet,
@@ -27,7 +28,7 @@ import {
   getWalletConfigByRentxName,
 } from "../../utils/assetConfigs";
 import { trimAddress } from "../../utils/strings";
-import { ActionButton, ActionButtonWrapper } from "../buttons/Buttons";
+import { ActionButton, ActionButtonWrapper, ActionButtonWrapperGapped } from "../buttons/Buttons";
 import { WalletIcon } from "../icons/RenIcons";
 import { PaperContent, SpacedPaperContent } from "../layout/Paper";
 import { Link } from "../links/Links";
@@ -205,6 +206,11 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   const subNetworkName = useSubNetworkName();
   const chainName = getChainConfigByRentxName(chain).full;
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
+  const {updateBsc} = useAddBsc();
+  const AddBscMetamask = async() => {
+    const ret = await updateBsc()
+    console.log(ret)
+  }
   return (
     <>
       <DebugComponentProps {...props} />
@@ -224,9 +230,14 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
           {subNetworkName && <span> ({subNetworkName})</span>}
         </Typography>
         <Typography variant="body1" align="center" color="textSecondary">
-          RenBridge requires you to connect to the {chainName} {networkName}{" "}
+          Defichain-Bridge requires you to connect to the {chainName} {networkName}{" "}
           {subNetworkName}
         </Typography>
+        <ActionButtonWrapperGapped>
+          <ActionButton onClick={AddBscMetamask}>
+            Add Binance to Metamask
+          </ActionButton>
+        </ActionButtonWrapperGapped>
       </PaperContent>
     </>
   );
@@ -388,54 +399,6 @@ const useResetWalletPicker = (onClose: () => void) => {
   return { handleBackToWalletPicker };
 };
 
-export const BinanceMetamaskConnectorInfo: WalletPickerProps<
-  any,
-  any
->["DefaultInfo"] = ({ acknowledge, onClose }) => {
-  const { handleBackToWalletPicker } = useResetWalletPicker(onClose);
-  return (
-    <>
-      <BridgeModalTitle
-        title=" "
-        onClose={onClose}
-        onPrev={handleBackToWalletPicker}
-      />
-      <SpacedPaperContent topPadding bottomPadding>
-        <Typography variant="h5" align="center" gutterBottom>
-          Connect BSC with MetaMask
-        </Typography>
-        <Typography
-          variant="body1"
-          align="center"
-          color="textSecondary"
-          gutterBottom
-        >
-          Please ensure that you have added the Binance Smart Chain network to
-          Metamask as explained{" "}
-          <Link href={links.BINANCE_METAMASK_CONNECTION} external>
-            here
-          </Link>
-        </Typography>
-      </SpacedPaperContent>
-      <PaperContent bottomPadding>
-        <ActionButtonWrapper>
-          <Button
-            variant="text"
-            color="primary"
-            onClick={handleBackToWalletPicker}
-          >
-            Use another wallet
-          </Button>
-        </ActionButtonWrapper>
-        <ActionButtonWrapper>
-          <ActionButton onClick={acknowledge}>
-            Continue with MetaMask
-          </ActionButton>
-        </ActionButtonWrapper>
-      </PaperContent>
-    </>
-  );
-};
 
 export const BinanceConnectorInfo: WalletPickerProps<
   any,

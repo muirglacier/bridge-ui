@@ -482,6 +482,11 @@ export const ActionButtonWrapper = styled("div")(() => ({
   display: "flex",
   justifyContent: "center",
 }));
+export const ActionButtonWrapperGapped = styled("div")(() => ({
+  marginTop: 20,
+  display: "flex",
+  justifyContent: "center",
+}));
 
 const useSmallActionButtonStyles = makeStyles({
   root: {

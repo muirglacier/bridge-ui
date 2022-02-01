@@ -7,7 +7,6 @@ import { MultiwalletProvider as RenMultiwalletProvider } from "@renproject/multi
 import React, { FunctionComponent } from "react";
 import {
   BinanceConnectorInfo,
-  BinanceMetamaskConnectorInfo,
 } from "../../components/wallet/WalletHelpers";
 import { env } from "../../constants/environmentVariables";
 import { featureFlags } from "../../constants/featureFlags";
@@ -82,7 +81,6 @@ export const walletPickerModalConfig = (targetEthChainId: number) => ({
               name: "Metamask",
               logo:
                 "https://avatars2.githubusercontent.com/u/45615063?s=60&v=4",
-              info: BinanceMetamaskConnectorInfo,
               connector: (() => {
                 const connector = new BinanceSmartChainInjectedConnector({
                   debug: true,
