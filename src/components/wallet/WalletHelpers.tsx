@@ -206,10 +206,17 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   const subNetworkName = useSubNetworkName();
   const chainName = getChainConfigByRentxName(chain).full;
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
-  const {updateBsc} = useAddBsc();
+  const {updateBsc} = useAddBsc("Binance Chain");
+  const {updateBsc : updateEth} = useAddBsc("Ethereum");
   const AddBscMetamask = async() => {
-    const ret = await updateBsc()
-    console.log(ret)
+    if (chainName=="Ethereum") {
+      const ret = await updateEth()
+      console.log(ret)
+    }else{
+      const ret = await updateBsc()
+      console.log(ret)
+    }
+    return true
   }
   return (
     <>
@@ -235,7 +242,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
         </Typography>
         <ActionButtonWrapperGapped>
           <ActionButton onClick={AddBscMetamask}>
-            Add Binance to Metamask
+            Switch Metamask to {chainName}
           </ActionButton>
         </ActionButtonWrapperGapped>
       </PaperContent>

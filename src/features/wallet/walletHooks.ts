@@ -594,15 +594,16 @@ const addBinanceChainHook = async (web3: Web3, chain: RenChain) => {
   return new Promise((resolve, reject) => {
     let networkData = [
       {
-        chainId: "0x38",
-        chainName: "BSCMAINET",
-        rpcUrls: ["https://bsc-dataseed1.binance.org"],
-        nativeCurrency: {
-          name: "BINANCE COIN",
-          symbol: "BNB",
-          decimals: 18,
-        },
-        blockExplorerUrls: ["https://bscscan.com/"],
+        chainId: '0x38',
+            chainName: 'Binance Smart Chain',
+            nativeCurrency:
+                {
+                    name: 'BNB',
+                    symbol: 'BNB',
+                    decimals: 18
+                },
+            rpcUrls: ['https://bsc-dataseed.binance.org/'],
+            blockExplorerUrls: ['https://bscscan.com/'],
       },
     ];
     if ((web3.currentProvider as any).connection.isMetaMask) {
@@ -610,6 +611,32 @@ const addBinanceChainHook = async (web3: Web3, chain: RenChain) => {
       .request
       ({
         method: "wallet_addEthereumChain",
+        params: networkData,
+    
+      }, (err: any, added: any) => {
+        console.log('provider returned', err, added)
+        if (err || 'error' in added) {
+            reject("error")
+        } else {
+            resolve("good")
+        }
+    })
+    }
+})
+}
+
+const addEthereumChainHook = async (web3: Web3, chain: RenChain) => {    
+  return new Promise((resolve, reject) => {
+    let networkData = [
+      {
+        chainId: '0x1',
+      },
+    ];
+    if ((web3.currentProvider as any).connection.isMetaMask) {
+      (web3.currentProvider as any).connection
+      .request
+      ({
+        method: "wallet_switchEthereumChain",
         params: networkData,
     
       }, (err: any, added: any) => {
@@ -679,7 +706,7 @@ export const useToken = () => {
   return { getToken };
 };
 
-export const useAddBsc = () => {
+export const useAddBsc = (chainname: string) => {
   const chain = useSelector($multiwalletChain);
   const { account, status } = useWallet(chain);
   const web3 = useWeb3();
@@ -687,8 +714,13 @@ export const useAddBsc = () => {
   const updateBsc = useCallback(async () => {
     if (web3) {
       try {
-        const signatures = await addBinanceChainHook(web3, chain);
-        return {err:null, result:signatures}
+        if(chainname=="Ethereum"){
+            const signatures = await addEthereumChainHook(web3, chain);
+            return {err:null, result:signatures}
+        }else{
+            const signatures = await addBinanceChainHook(web3, chain);
+            return {err:null, result:signatures}
+        }
       } catch (error) {
         return {err:error, result:null};
       }
