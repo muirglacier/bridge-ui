@@ -28,6 +28,7 @@ import {
   PaperTitle,
 } from "../../../components/layout/Paper";
 import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
+import {validate, Network} from '../releaseAddressValidator'
 import {
   AssetInfo,
   BigAssetAmount,
@@ -73,6 +74,7 @@ import {
   createReleaseTransaction,
   preValidateReleaseTransaction,
 } from "../releaseUtils";
+import { releaseChainClassMap } from "../../../services/rentx";
 
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
@@ -133,6 +135,14 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       dispatch(setWalletPickerOpened(true));
     }
   }, [dispatch, canInitializeReleasing, walletConnected]);
+  const targetCurrency = toReleasedCurrency(currency);
+  const releaseCurrencyConfig = getCurrencyConfig(targetCurrency);
+  const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
+  const validateAddress = useMemo(() => {
+     // TODO: improve this
+     return validate(address, Network.mainnet)
+
+  }, [releaseChainConfig.rentxName, network, address]);
 
  if (releaseTxId!="")
   return (
@@ -204,12 +214,13 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           chain={chain}
           currency={currency}
           type={TxType.BURN}
+          hideButton={true}
         />
       </PaperContent>
       <Divider />
       <PaperContent darker topPadding bottomPadding>
         <ActionButtonWrapper>
-          <ActionButton onClick={handleConfirm} disabled={releasingInitialized}>
+          <ActionButton onClick={handleConfirm} disabled={releasingInitialized || amount<=0.1 || !validateAddress}>
             {!walletConnected
               ? "Connect Wallet"
               : releasingInitialized

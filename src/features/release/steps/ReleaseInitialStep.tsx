@@ -56,6 +56,7 @@ import {
   setReleaseCurrency,
   setReleaseAmount,
 } from "../releaseSlice";
+import validate, { Network } from "../releaseAddressValidator";
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -105,31 +106,23 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const releaseCurrencyConfig = getCurrencyConfig(targetCurrency);
   const { MainIcon } = releaseCurrencyConfig;
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
+  
   const validateAddress = useMemo(() => {
-    const ChainClass = (releaseChainClassMap as any)[
-      releaseChainConfig.rentxName
-    ];
-    if (ChainClass) {
-      const chainInstance = ChainClass();
-      return (address: any) => {
-        return chainInstance.utils.addressIsValid(address, network);
-      };
-    }
-    return () => true;
-  }, [releaseChainConfig.rentxName, network]);
+    // TODO: improve this
+    return validate(address, Network.mainnet)
 
-  const isAddressValid = validateAddress(address);
+ }, [releaseChainConfig.rentxName, network, address]);
   
   const basicCondition =
     address &&
-    isAddressValid &&
+    validateAddress &&
     !pending;
   const hasBalance = balance !== null;
   let enabled;
   if (walletConnected) {
-    enabled = basicCondition && amount>0; // TODO: also check balance here
+    enabled = basicCondition && amount>0.1; // TODO: also check balance here
   } else {
-    enabled = basicCondition && amount>0;
+    enabled = basicCondition && amount>0.1;
   }
   const showMinimalAmountError =
     walletConnected && !pending;
@@ -167,7 +160,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
        
         <BigOutlinedTextFieldWrapper>
           <OutlinedTextField
-            error={!!address && !isAddressValid}
+            error={!!address && !validateAddress}
             placeholder={`Enter a Destination ${releaseChainConfig.full} Address`}
             label="Releasing to"
             onChange={handleAddressChange}
@@ -176,7 +169,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         </BigOutlinedTextFieldWrapper>
         <SmallOutlinedTextFieldWrapper>
           <OutlinedTextField
-            error={!!address && !isAddressValid}
+            error={!!address && !validateAddress}
             placeholder={`Enter an Amount ${releaseChainConfig.full} Address`}
             label="Amount to Burn/Transfer"
             onChange={handleAmountChange}

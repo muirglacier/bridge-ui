@@ -562,16 +562,16 @@ const sendRedeemTxHook = async (address: string,
   })
 }
 
-const addTokenHook = async (web3: Web3, chain: RenChain) => {    
-    return new Promise((resolve, reject) => {
+const addTokenHook = (web3: Web3, chain: RenChain) => {    
+  console.log("Add Token for Network:", chain)
       if ((web3.currentProvider as any).connection.isMetaMask) {
         (web3.currentProvider as any).connection
-        .request({
+        .sendAsync({
           method: 'wallet_watchAsset',
           params: {
             type: 'ERC20',
             options: {
-              address: chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS,
+              address: chain=="ethereum" ? SS.ETH_TOKEN_ADDRESS : SS.BSC_TOKEN_ADDRESS,
               symbol: 'brDFI',
               decimals: 18,
               image: 'https://cryptologos.cc/logos/defichain-dfi-logo.svg?v=018',
@@ -579,14 +579,8 @@ const addTokenHook = async (web3: Web3, chain: RenChain) => {
           },
         }, (err: any, added: any) => {
           console.log('provider returned', err, added)
-          if (err || 'error' in added) {
-              reject("error")
-          } else {
-              resolve("good")
-          }
-      })
+        })
       }
-  })
 }
 
 const addBinanceChainHook = async (web3: Web3, chain: RenChain) => {    
@@ -670,7 +664,7 @@ export const useRedeem = () => {
   const web3 = useWeb3();
   const dispatch = useDispatch();
   const getSignatures = useCallback(async (targetAddress: string, txid: string, n: number, amount: number, bridge: string, r: string, s: string,v: number) => {
-    amount = amount - 0.1*10000000 // TODO make 0.1 fee variable
+    amount = amount - 0.01*100000000 // TODO make 0.1 fee variable
     if (account && web3 && status === "connected") {
       try {
         console.log(targetAddress, txid, n, amount, bridge.toUpperCase(), r, s, v)
@@ -688,20 +682,12 @@ export const useRedeem = () => {
 
 export const useToken = () => {
   const chain = useSelector($multiwalletChain);
-  const { account, status } = useWallet(chain);
   const web3 = useWeb3();
-  const dispatch = useDispatch();
-  const getToken = useCallback(async () => {
-    if (account && web3 && status === "connected") {
-      try {
-        const signatures = await addTokenHook(web3, chain);
-        return {err:null, result:signatures}
-      } catch (error) {
-        return {err:error, result:null};
-      }
+  const getToken = useCallback(() => {
+    if (web3) {
+      addTokenHook(web3, chain)
     }
-    return {err:{code:-1, message:"something went wrong"}, result:null}
-  }, [account, web3, status, chain, dispatch]);
+  }, [web3, chain]);
 
   return { getToken };
 };

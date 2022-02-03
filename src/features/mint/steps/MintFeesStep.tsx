@@ -233,6 +233,7 @@ export const MintFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
           chain={chain}
           currency={currency}
           type={TxType.MINT}
+          hideButton={true}
         />
       </PaperContent>
       <Divider />

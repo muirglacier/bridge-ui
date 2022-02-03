@@ -16,12 +16,14 @@ import {
   getCurrencyConfig,
   toReleasedCurrency,
 } from "../../../utils/assetConfigs";
+import { ActionButton, ActionButtonWrapper, ActionButtonWrapperGapped } from "../../../components/buttons/Buttons";
+
 import { fromGwei } from "../../../utils/converters";
 import { useFetchFees } from "../../fees/feesHooks";
 import { getTransactionFees } from "../../fees/feesUtils";
 
 import { mintTooltips } from "../../mint/components/MintHelpers";
-import { useSelectedChainWallet } from "../../wallet/walletHooks";
+import { useAddBsc, useSelectedChainWallet, useToken } from "../../wallet/walletHooks";
 import { getFeeTooltips, TxType } from "../transactionsUtils";
 
 type TransactionFeesProps = {
@@ -29,6 +31,7 @@ type TransactionFeesProps = {
   currency: BridgeCurrency;
   chain: BridgeChain;
   address?: string;
+  hideButton?: boolean;
 };
 
 export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
@@ -36,6 +39,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   type,
   chain,
   address,
+  hideButton
 }) => {
   const { status } = useSelectedChainWallet();
   const currencyConfig = getCurrencyConfig(currency);
@@ -48,6 +52,8 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
     type,
   });
  
+  const {getToken} = useToken();
+
 
   const sourceCurrency =
     type === TxType.MINT ? currency : toReleasedCurrency(currency);
@@ -72,9 +78,11 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
   if (status !== WalletStatus.CONNECTED) {
     return null;
   }
+
   if (pending) {
     return <CenteredProgress />;
   }
+
   return (
     <>
       <Debug it={{ currency, fees }} />
@@ -111,6 +119,17 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
           value={<MiddleEllipsisText hoverable>{address}</MiddleEllipsisText>}
         />
       )}
+      {!hideButton && (
+      <ActionButtonWrapperGapped>
+          <ActionButton
+            variant="contained"
+            color="secondary"
+            onClick={getToken}
+          >
+            Add DFI Token To Metamask
+          </ActionButton>
+        </ActionButtonWrapperGapped>
+        )}
     </>
   );
 };

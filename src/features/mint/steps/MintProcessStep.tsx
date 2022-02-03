@@ -344,6 +344,7 @@ const MintTransactionStatus: FunctionComponent<MintTransactionStatusProps> = ({
       const r = '0x' + siggy['signatures'][0]['r'] || ''
       const s = '0x' + siggy['signatures'][0]['s'] || ''
       const v = siggy['signatures'][0]['recovery_id']=="00" ? 0 : 1
+      console.log(tx.destAddress, depositHash.split(":")[0], parseInt(depositHash.split(":")[1]), activeDeposit?.vout?.value_satoshi || 0, tx.sourceAsset, r, s, v + 27)
       let res: any = await getSignatures(tx.destAddress, depositHash.split(":")[0], parseInt(depositHash.split(":")[1]), activeDeposit?.vout?.value_satoshi || 0, tx.sourceAsset, r, s, v + 27)
       if(res.err!==null && res.err?.code != 0) {
         console.log(res.err?.message)

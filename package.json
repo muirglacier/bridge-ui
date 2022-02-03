@@ -1,5 +1,5 @@
 {
-  "name": "bridge-v2",
+  "name": "defichain-bridge",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -39,6 +39,8 @@
     "@walletconnect/web3-provider": "^1.3.1",
     "@xstate/inspect": "^0.4.1",
     "@xstate/react": "^1.2.2",
+    "base58-js": "^1.0.0",
+    "bech32": "^2.0.0",
     "classnames": "^2.2.6",
     "firebase": "^8.1.1",
     "notistack": "^1.0.0",
@@ -54,6 +56,7 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
     "react-use": "^15.3.4",
+    "sha256-uint8array": "^0.10.3",
     "typeface-roboto": "^1.1.13",
     "typescript": "^4.0.3",
     "usehooks-ts": "^1.0.14",

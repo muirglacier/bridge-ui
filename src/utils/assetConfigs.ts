@@ -435,7 +435,7 @@ export const chainsConfig: Record<BridgeChain, BridgeChainConfig> = {
     rentxName: RenChain.defichain,
     blockTime: 30,
     nativeCurrency: BridgeCurrency.DFI,
-    targetConfirmations: 15,
+    targetConfirmations: 10,
   },
   [BridgeChain.BCHC]: {
     symbol: BridgeChain.BCHC,
