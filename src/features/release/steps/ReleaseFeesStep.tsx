@@ -154,8 +154,11 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
     if (releaseTxId!="" && ((ethconf as any)?.Executed || false) == false) {
       getLogs(releaseTxId, chain=="BSCC"?"binance":"ethereum").then((jsonObj) => {
         setEthconf(jsonObj)
+        const intervalObj = setTimeout(() => getter(), 3000);
+      }).catch(() => {
+        const intervalObj = setTimeout(() => getter(), 3000);
       })
-      const intervalObj = setTimeout(() => getter(), 3000);
+      
     }
   }
   useEffect(() => {

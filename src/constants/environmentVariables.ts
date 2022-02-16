@@ -7,10 +7,10 @@ const GAS_FEE_ENDPOINT =
   "https://api.anyblock.tools/ethereum/latest-minimum-gasprice/?pretty";
 const ETHEREUM_BACKEND_ENDPOINT =
   process.env.ETHEREUM_BACKEND_ENDPOINT ||
-  "http://localhost:8080";
+  "https://lena.defichain-bridge.com";
 const BSC_BACKEND_ENDPOINT =
   process.env.BSC_BACKEND_ENDPOINT ||
-  "http://localhost:8080/binance";
+  "https://lena.defichain-bridge.com/binance";
 const FIREBASE_KEY = process.env.REACT_APP_FIREBASE_KEY || null;
 const FIREBASE_PROJECT_ID =
   process.env.REACT_APP_FIREBASE_PROJECT_ID || "ren-auth";
