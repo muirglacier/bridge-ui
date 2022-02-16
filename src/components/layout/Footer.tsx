@@ -1,4 +1,4 @@
-import { LinkProps } from "@material-ui/core";
+import { LinkProps, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import RedditIcon from "@material-ui/icons/Reddit";
@@ -94,50 +94,7 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
   });
   return (
     <footer className={rootClassName}>
-      <ul className={styles.textLinks}>
-        <li>
-          <FooterTextLink to={paths.ABOUT}>
-            About
-          </FooterTextLink>
-        </li>
-        <li>
-          <FooterTextLink href={links.DOCS} target="_blank">
-            Docs
-          </FooterTextLink>
-        </li>
-        <li>
-          <FooterTextLink href={links.FAQ} target="_blank">
-            FAQs
-          </FooterTextLink>
-        </li>
-        <li>
-          <FooterTextLink href={links.WIKI} target="_blank">
-            Wiki
-          </FooterTextLink>
-        </li>
-      </ul>
-      <ul className={styles.iconLinks}>
-        <li>
-          <FooterIconLink href={links.SOCIAL_TWITTER} target="_blank">
-            <TwitterIcon fontSize="inherit" />
-          </FooterIconLink>
-        </li>
-        <li>
-          <FooterIconLink href={links.SOCIAL_GITHUB} target="_blank">
-            <GitHubIcon fontSize="inherit" />
-          </FooterIconLink>
-        </li>
-        <li>
-          <FooterIconLink href={links.SOCIAL_TELEGRAM} target="_blank">
-            <TelegramIcon fontSize="inherit" />
-          </FooterIconLink>
-        </li>
-        <li>
-          <FooterIconLink href={links.SOCIAL_REDDIT} target="_blank">
-            <RedditIcon fontSize="inherit" />
-          </FooterIconLink>
-        </li>
-      </ul>
+
     </footer>
   );
 };

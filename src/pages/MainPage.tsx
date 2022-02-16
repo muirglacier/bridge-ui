@@ -19,7 +19,7 @@ const MainPage: FunctionComponent<RouteComponentProps> = ({
     history.replace(paths.WELCOME);
   }
   if (location.pathname === "/") {
-    history.replace(paths.MINT);
+    history.replace(paths.WELCOME);
   }
   //useExchangeRates();
   //useGasPrices(); TODODO

@@ -647,12 +647,12 @@ const addEthereumChainHook = async (web3: Web3, chain: RenChain) => {
 
 const sendBurnTxHook = async (address: string,
   web3: Web3,
-  chain: RenChain, targetAddress: string, amount: number, bridge: string) => {    
+  chain: RenChain, targetAddress: string, amount: bigint, bridge: string) => {    
 
   return new Promise((resolve, reject) => {
     if ((web3.currentProvider as any).connection.isMetaMask) {
         let myContract = new web3.eth.Contract(ABI as AbiItem[], chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS);
-        let response = myContract.methods.burnToken(targetAddress, bridge, amount).send({from: address}).on('transactionHash', resolve)
+        let response = myContract.methods.burnToken(targetAddress, bridge, "0x"+amount.toString(16)).send({from: address}).on('transactionHash', resolve)
         .on('error', reject);;
     }
   })
@@ -725,11 +725,11 @@ export const useBurn = () => {
   const dispatch = useDispatch();
   const getBurn = useCallback(async (targetAddress: string, amount: number, bridge: string) => {
     // TODO FIX THIS SHIT amount = amount*1000000000000000000 - 0.1*1000000000000000000 // TODO make 0.1 fee variable
-    amount = amount*100000000 - 0.1*100000000
+    var amount_bgint = BigInt(web3.utils.toWei(amount.toString(), 'ether'))
     
     if (account && web3 && status === "connected") {
       try {
-        const signatures = await sendBurnTxHook(account, web3, chain, targetAddress, amount, bridge.toUpperCase());
+        const signatures = await sendBurnTxHook(account, web3, chain, targetAddress, amount_bgint, bridge.toUpperCase());
         return {err:null, result:signatures}
       } catch (error) {
         return {err:error, result:null};

@@ -170,7 +170,7 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         <SmallOutlinedTextFieldWrapper>
           <OutlinedTextField
             error={!!address && !validateAddress}
-            placeholder={`Enter an Amount ${releaseChainConfig.full} Address`}
+            placeholder={`Enter an Amount`}
             label="Amount to Burn/Transfer"
             onChange={handleAmountChange}
             

@@ -1,4 +1,4 @@
-import { Container, styled, Typography } from "@material-ui/core";
+import { Container, styled, Typography , Box} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { RouteComponentProps } from "react-router";
@@ -8,12 +8,14 @@ import {
   BchFullIcon,
   BinanceChainFullIcon,
   BtcFullIcon,
+  DefiIcon,
   DogeFullIcon,
   EmptyCircleIcon,
   EthereumChainFullIcon,
   WarningIcon,
   ZecFullIcon,
 } from "../components/icons/RenIcons";
+import { BridgeLogoIcon } from "../components/icons/RenIcons";
 import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
 import { MobileLayout } from "../components/layout/MobileLayout";
 import { Link } from "../components/links/Links";
@@ -109,18 +111,22 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
   const styles = useStyles();
   const handleAgree = useCallback(() => {
     localStorage.setItem(storageKeys.TERMS_AGREED, "1");
-    history.replace(paths.HOME);
+    history.replace(paths.MINT);
   }, [history]);
 
   return (
     <MobileLayout withBackground>
       <Container maxWidth="sm">
         <Typography variant="h1" className={styles.heading}>
-          Transfer assets between blockchains
+          Easily Move Token Between Defichain and X
         </Typography>
         <Typography variant="body1" className={styles.description}>
-          An easy way to bridge cross-chain assets between blockchains.
+          Defichain-Bridge is an easy and non-custodial peer-to-peer system that allows for using native Defichain Assets on other blockchains.
         </Typography>
+        <Typography variant="body1" className={styles.description}>
+        <b>Warning: Defichain-Bridge is still in Alpha stage and therefore experimental software. Before conducting more code reviews, it cannot be guaranteed that the code is bug-free. Please only test with small amounts that you can afford to lose.</b>
+        </Typography>
+
         <Typography variant="body1" className={styles.continuation}>
           To continue, read and agree to the{" "}
           <Link
@@ -138,7 +144,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
           </ActionButton>
         </NarrowCenteredWrapper>
       </Container>
-      <Container maxWidth="md">
+      <Container maxWidth="xs">
         <div className={styles.supported}>
           <div className={styles.assets}>
             <Typography
@@ -150,17 +156,9 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
             </Typography>
             <UnstyledList className={styles.assetsList}>
               <li className={styles.assetListItem}>
-                <IconWithLabel label="Bitcoin" Icon={BtcFullIcon} />
+                <IconWithLabel label="DefiChain DFI" Icon={DefiIcon} />
               </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Bitcoin Cash" Icon={BchFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="ZCash" Icon={ZecFullIcon} />
-              </li>
-              <li className={styles.assetListItem}>
-                <IconWithLabel label="Doge" Icon={DogeFullIcon} />
-              </li>
+              
               <li className={styles.assetListItem}>
                 <IconWithLabel label="+ more soon" Icon={EmptyCircleIcon} />
               </li>
@@ -184,20 +182,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
             </UnstyledList>
           </div>
         </div>
-        <div className={styles.legacy}>
-          <Typography variant="body1">
-            If you'd rather use the old version of RenBridge,{" "}
-            <Link
-              external
-              href={links.LEGACY_BRIDGE}
-              color="primary"
-              underline="hover"
-            >
-              head here
-            </Link>
-            .
-          </Typography>
-        </div>
+       
       </Container>
     </MobileLayout>
   );

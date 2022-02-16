@@ -220,7 +220,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       <Divider />
       <PaperContent darker topPadding bottomPadding>
         <ActionButtonWrapper>
-          <ActionButton onClick={handleConfirm} disabled={releasingInitialized || amount<=0.1 || !validateAddress}>
+          <ActionButton onClick={handleConfirm} disabled={releasingInitialized || amount<=0.01 || !validateAddress}>
             {!walletConnected
               ? "Connect Wallet"
               : releasingInitialized

@@ -575,11 +575,11 @@ export const supportedLockCurrencies = [
 ];
 
 export const supportedMintDestinationChains = [
-  BridgeChain.ETHC,
+  // TODO: ACTIVATE ETH HERE BridgeChain.ETHC,
   BridgeChain.BSCC,
 ];
 
-export const supportedBurnChains = [BridgeChain.ETHC, BridgeChain.BSCC];
+export const supportedBurnChains = [/*BridgeChain.ETHC, */BridgeChain.BSCC];
 
 export const supportedReleaseCurrencies = [
   BridgeCurrency.RENDFI,

@@ -8,8 +8,8 @@ import { HomeMenuIconButton } from "../buttons/Buttons";
 import { BetaIcon, RenBridgeLogoIcon, BridgeLogoIcon } from "../icons/RenIcons";
 import { Footer } from "./Footer";
 
-const headerHeight = 82;
-const footerHeight = 55;
+const headerHeight = 112;
+const footerHeight = 80;
 
 export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
   grow: {
@@ -126,6 +126,7 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
   useBackgroundReplacer(Boolean(withBackground));
 
   return (
+    <>
     <Container maxWidth="lg">
       <Grid container item>
         <Container maxWidth="lg">
@@ -140,9 +141,11 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
             {WalletMenu}
           </header>
           <main className={styles.main}>{children}</main>
-          <Footer />
+          
         </Container>
       </Grid>
     </Container>
+    <Footer />
+    </>
   );
 };
