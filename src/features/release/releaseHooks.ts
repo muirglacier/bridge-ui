@@ -53,34 +53,5 @@ export type BurnMachineSchemaState = keyof BurnMachineSchema["states"];
 export const useReleaseTransactionPersistence = (
   service: Interpreter<BurnMachineContext, any, BurnMachineEvent>
 ) => {
-  const dispatch = useDispatch();
-  const sub = useCallback(
-    async (state: State<BurnMachineContext, BurnMachineEvent>) => {
-      const tx = state.context.tx;
-      try {
-        const event = state.event.type;
-        // Persist more regularly to prevent the user from seeing confusing states
-        // and submitting multiple times
-        if (["CREATED", "SUBMITTED", "CONFIRMED", "RELEASED"].includes(event)) {
-          // Clone prevents throwing serialization errors during dispatch
-          // which breaks the event loop and prevents txs from processing
-          const newDbTx = cloneTx(tx);
-          await db.updateTx(newDbTx);
-          dispatch(updateTransaction(newDbTx));
-        }
-      } catch (err) {
-        console.warn("Release Tx synchronization failed", err, tx);
-      }
-    },
-    [dispatch]
-  );
 
-  useEffect(() => {
-    service.subscribe(sub);
-    return () => {
-      service.off(sub);
-    };
-  }, [dispatch, service, sub]);
-
-  service.subscribe();
 };

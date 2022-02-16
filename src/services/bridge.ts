@@ -39,6 +39,19 @@ export class DepositsMessage {
   extra?: string
   blame?: Blame
 }
+export class Log {
+  From?: string
+  To?: string
+  Bridge?: string
+  Value?: number
+  Extradata?: number
+}
+export class LogsMessage {
+  Confirmations?: number
+  Executed?: boolean
+  Log?: Log
+  DefiTx?: string
+}
 
 export class Signature {
   signed_msg?: string
@@ -76,4 +89,10 @@ export const getKeySignatures = async (userAddress: string, txid: string, n: num
   console.log(url)
   let settings = { method: "Get" };
   return fetch(url, settings).then(res => res.json() as SignatureMessage);
+};
+
+export const getLogs = async (txid: string, destChain: string) => {
+  let url = buildUrl(destChain) + "/logs/" + txid;
+  let settings = { method: "Get" };
+  return fetch(url, settings).then(res => res.json() as LogsMessage);
 };

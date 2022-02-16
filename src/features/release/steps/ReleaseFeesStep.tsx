@@ -6,6 +6,8 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import {getLogs} from "../../../services/bridge"
+
 import {
   ReleaseShortcutCompletedStatus,
   ReleaseProgressStatus,
@@ -17,6 +19,7 @@ import { useNotifications } from "../../../providers/Notifications";
 import {
   ActionButton,
   ActionButtonWrapper,
+  TransactionDetailsButton,
 } from "../../../components/buttons/Buttons";
 import { NumberFormatText } from "../../../components/formatting/NumberFormatText";
 import { BackArrowIcon } from "../../../components/icons/RenIcons";
@@ -27,7 +30,7 @@ import {
   PaperNav,
   PaperTitle,
 } from "../../../components/layout/Paper";
-import { CenteredProgress } from "../../../components/progress/ProgressHelpers";
+import { CenteredProgress, ProgressWithContent, ProgressWrapper } from "../../../components/progress/ProgressHelpers";
 import {validate, Network} from '../releaseAddressValidator'
 import {
   AssetInfo,
@@ -75,6 +78,8 @@ import {
   preValidateReleaseTransaction,
 } from "../releaseUtils";
 import { releaseChainClassMap } from "../../../services/rentx";
+import { SmallWrapper, MediumWrapper } from "../../../components/layout/LayoutHelpers";
+import { orangeLight } from "../../../theme/colors";
 
 export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   onPrev,
@@ -85,6 +90,7 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
   const { account, walletConnected } = useSelectedChainWallet();
   const [releasingInitialized, setReleasingInitialized] = useState(false);
   const [releaseTxId, setReleaseTxId] = useState("");
+  const [ethconf, setEthconf] = useState({});
   const { currency, address, amount } = useSelector($release);
   const network = useSelector($renNetwork);
   const {
@@ -144,7 +150,22 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
 
   }, [releaseChainConfig.rentxName, network, address]);
 
+  var getter = () => { 
+    if (releaseTxId!="" && ((ethconf as any)?.Executed || false) == false) {
+      getLogs(releaseTxId, chain=="BSCC"?"binance":"ethereum").then((jsonObj) => {
+        setEthconf(jsonObj)
+      })
+      const intervalObj = setTimeout(() => getter(), 3000);
+    }
+  }
+  useEffect(() => {
+    if (releaseTxId!="") {
+      getter()
+    }
+  }, [releaseTxId]);
+
  if (releaseTxId!="")
+  if (((ethconf as any)?.Executed || false) == true) {
   return (
     <>
     <PaperHeader>
@@ -160,6 +181,36 @@ export const ReleaseFeesStep: FunctionComponent<TxConfigurationStepProps> = ({
       <ReleaseShortcutCompletedStatus txid={releaseTxId} amount={amount} chain={tx.sourceChain} onPrev={onPrev}/>
       </PaperContent>
     </>)
+  } else {
+    return (
+      <>
+      <PaperHeader>
+          
+        </PaperHeader>
+        <PaperContent bottomPadding>
+
+      <ProgressWrapper>
+        <ProgressWithContent
+          color={orangeLight}
+          confirmations={(ethconf as any)?.Confirmations || 0}
+          targetConfirmations={5}
+        >
+          <MainIcon fontSize="inherit" color="inherit" />
+        </ProgressWithContent>
+      </ProgressWrapper>
+      <SmallWrapper>
+        <Typography variant="body1" align="center">
+          {(ethconf as any)?.Confirmations || 0} of {5} confirmations
+        </Typography>
+      </SmallWrapper>
+      <MediumWrapper>
+      <Typography variant="body1" align="center">
+      Please wait until your transaction has been confirmed on the {chain=="BSCC"?"Binance":"Ethereum"} Blockchain. Do not close this window, as your DFI  will be released after this step has completed.
+      </Typography>
+      </MediumWrapper>
+      </PaperContent>
+      </>)
+  }
  else return (
      <>
       <PaperHeader>
