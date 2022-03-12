@@ -4,9 +4,9 @@ import { AppLoader } from "./components/progress/AppLoader";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import { paths } from "./pages/routes";
 import { WelcomePage } from "./pages/WelcomePage";
+import { BugBounty } from "./pages/BugBounty";
 
 const MainPage = lazy(() => import("./pages/MainPage"));
-const AboutPage = lazy(() => import("./pages/AboutPage"));
 
 const mainPagePaths = [
   paths.HOME,
@@ -21,7 +21,7 @@ function App() {
       <Suspense fallback={<AppLoader />}>
         <Switch>
           <Route exact path={paths.WELCOME} component={WelcomePage} />
-          <Route exact path={paths.ABOUT} component={AboutPage} />
+          <Route exact path={paths.BUGBOUNTY} component={BugBounty} />
           <Route exact path={mainPagePaths} component={MainPage} />
           <Route component={NotFoundPage} />
         </Switch>

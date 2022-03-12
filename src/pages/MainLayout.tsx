@@ -72,6 +72,7 @@ import {
   useMobileLayoutStyles,
 } from "../components/layout/MobileLayout";
 import { BridgeLogoIcon } from "../components/icons/RenIcons";
+import { Link } from "react-router-dom";
 
 export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   children,
@@ -273,9 +274,9 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   );
 
   const WalletLogo = (
-    <Box display="inline-block" p={3}>
+    <Link to="/welcome"><Box display="inline-block" p={3}>
           <BridgeLogoIcon width="auto" height="auto"/>
-    </Box>
+    </Box></Link>
   );
 
   const WalletMenu = (

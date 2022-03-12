@@ -1,5 +1,6 @@
 import { Container, styled, Typography , Box} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
+import Alert from "@material-ui/lab/Alert";
 import React, { FunctionComponent, useCallback, useEffect } from "react";
 import { RouteComponentProps } from "react-router";
 import { ActionButton } from "../components/buttons/Buttons";
@@ -113,6 +114,9 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
     localStorage.setItem(storageKeys.TERMS_AGREED, "1");
     history.replace(paths.MINT);
   }, [history]);
+  const handleBugbounty = useCallback(() => {
+    history.replace(paths.BUGBOUNTY);
+  }, [history]);
 
   return (
     <MobileLayout withBackground>
@@ -124,7 +128,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
           Defichain-Bridge is an easy and non-custodial peer-to-peer system that allows for using native Defichain Assets on other blockchains.
         </Typography>
         <Typography variant="body1" className={styles.description}>
-        <b>Warning: Defichain-Bridge is still in Alpha stage and therefore experimental software. Before conducting more code reviews, it cannot be guaranteed that the code is bug-free. Please only test with small amounts that you can afford to lose.</b>
+        <Alert severity="error">Warning! Defichain Bridge is currently in the beta testing phase. Things are expected to break. If you want to participate in the hunt for bugs, check out our bug bounty program. In the meantime, do not send more funds to the bridge than you can afford to lose.</Alert>
         </Typography>
 
         <Typography variant="body1" className={styles.continuation}>
@@ -139,8 +143,11 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
           </Link>
         </Typography>
         <NarrowCenteredWrapper>
-          <ActionButton className={styles.button} onClick={handleAgree}>
+          <ActionButton  className={styles.button} onClick={handleAgree}>
             Agree & Continue
+          </ActionButton>
+          <ActionButton className={styles.button} onClick={handleBugbounty} color="secondary">
+            Bug Bounty Program
           </ActionButton>
         </NarrowCenteredWrapper>
       </Container>

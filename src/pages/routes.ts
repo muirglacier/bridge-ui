@@ -4,6 +4,7 @@ const ABOUT = "/about";
 const HOME = "/";
 const MINT = "/escape";
 const RELEASE = "/comeback";
+const BUGBOUNTY = "/bugbounty";
 
 const _TRANSACTION = "/transaction";
 
@@ -12,6 +13,7 @@ const RELEASE_TRANSACTION = RELEASE + _TRANSACTION;
 
 export const paths = {
   WELCOME,
+  BUGBOUNTY,
   CATALOG,
   ABOUT,
   HOME,
@@ -19,4 +21,5 @@ export const paths = {
   MINT_TRANSACTION,
   RELEASE,
   RELEASE_TRANSACTION,
+  
 };
