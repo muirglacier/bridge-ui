@@ -274,7 +274,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   );
 
   const WalletLogo = (
-    <Link to="/welcome"><Box display="inline-block" p={3}>
+    <Link to="/" style={{ color: 'black' }}><Box display="inline-block" p={3}>
           <BridgeLogoIcon width="auto" height="auto"/>
     </Box></Link>
   );

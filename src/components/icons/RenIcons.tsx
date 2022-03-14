@@ -118,8 +118,8 @@ export const SpecialAlertIcon: CustomSvgIconComponent = (props) => (
 );
 
 export const BridgeLogoIcon: CustomSvgIconComponent = (props) => {
-  const scalingProps = getScalingPropsFactored(850.39, 350.39, 2.5);
-  return<SvgIcon component={BridgeLogo} {...scalingProps} {...props}/>
+  const scalingProps = getScalingPropsFactored(850.39, 350.39, 3.2);
+  return<SvgIcon fill="black" component={BridgeLogo} {...scalingProps} {...props}/>
 };
 
 
