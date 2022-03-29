@@ -149,3 +149,24 @@ export const MobileLayout: FunctionComponent<MobileLayoutProps> = ({
     </>
   );
 };
+
+export const MobileLayoutNoHeader: FunctionComponent<MobileLayoutProps> = ({
+  withBackground,
+  children,
+}) => {
+  const styles = useMobileLayoutStyles();
+  useBackgroundReplacer(Boolean(withBackground));
+
+  return (
+    <>
+    <Container maxWidth="lg">
+      <Grid container item>
+        <Container maxWidth="lg">
+          <main className={styles.main}>{children}</main>
+        </Container>
+      </Grid>
+    </Container>
+    <Footer />
+    </>
+  );
+};

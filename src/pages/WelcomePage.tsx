@@ -18,7 +18,7 @@ import {
 } from "../components/icons/RenIcons";
 import { BridgeLogoIcon } from "../components/icons/RenIcons";
 import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
-import { MobileLayout } from "../components/layout/MobileLayout";
+import { MobileLayoutNoHeader } from "../components/layout/MobileLayout";
 import { Link } from "../components/links/Links";
 import { UnstyledList } from "../components/typography/TypographyHelpers";
 import { links, storageKeys } from "../constants/constants";
@@ -29,7 +29,7 @@ import { paths } from "./routes";
 const useStyles = makeStyles((theme) => ({
   root: {},
   heading: {
-    marginTop: 112,
+    marginTop: 0,
     textAlign: "center",
     color: theme.palette.text.primary,
   },
@@ -118,11 +118,14 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
     history.replace(paths.BUGBOUNTY);
   }, [history]);
 
+
   return (
-    <MobileLayout withBackground>
+    <MobileLayoutNoHeader withBackground>
+      
       <Container maxWidth="sm">
         <Typography variant="h1" className={styles.heading}>
-          Easily Move Token Between Defichain and X
+          <BridgeLogoIcon width="auto" height="auto"/>
+          <Box>Easily Move Token Between Defichain and X</Box>
         </Typography>
         <Typography variant="body1" className={styles.description}>
           Defichain-Bridge is an easy and non-custodial peer-to-peer system that allows for using native Defichain Assets on other blockchains.
@@ -191,6 +194,6 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         </div>
        
       </Container>
-    </MobileLayout>
+    </MobileLayoutNoHeader>
   );
 };
