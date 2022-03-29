@@ -29,7 +29,7 @@ import { paths } from "./routes";
 const useStyles = makeStyles((theme) => ({
   root: {},
   heading: {
-    marginTop: 0,
+    marginTop: 112,
     textAlign: "center",
     color: theme.palette.text.primary,
   },
@@ -125,7 +125,7 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
       <Container maxWidth="sm">
         <Typography variant="h1" className={styles.heading}>
           <BridgeLogoIcon width="auto" height="auto"/>
-          <Box>Easily Move Token Between Defichain and X</Box>
+          <Box className={styles.description}>Easily Move Token Between Defichain and X</Box>
         </Typography>
         <Typography variant="body1" className={styles.description}>
           Defichain-Bridge is an easy and non-custodial peer-to-peer system that allows for using native Defichain Assets on other blockchains.
