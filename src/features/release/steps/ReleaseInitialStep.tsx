@@ -1,5 +1,5 @@
 import { Divider, Fade, Typography } from "@material-ui/core";
-import React, { FunctionComponent, useCallback, useMemo } from "react";
+import React, { FunctionComponent, useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   ActionButton,
@@ -57,6 +57,7 @@ import {
   setReleaseAmount,
 } from "../releaseSlice";
 import validate, { Network } from "../releaseAddressValidator";
+import { BridgeModal } from "../../../components/modals/BridgeModal";
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -98,6 +99,16 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
     },
     [dispatch]
   );
+
+  const [recoverOpened, setRecoverOpened] = useState(false);
+  const handleRecover = useCallback((e) => {
+    setRecoverOpened(true);
+    e.preventDefault();
+  }, []);
+  const handleRecoverClose = useCallback(() => {
+    setRecoverOpened(false);
+  }, []);
+ 
 
   
 
@@ -188,7 +199,26 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
             {walletConnected ? "Next" : "Connect Wallet"}
           </ActionButton>
         </ActionButtonWrapper>
+        <Typography
+          variant="subtitle2"
+          align="center"
+          color="textSecondary"
+          gutterBottom
+        >
+        <Link href={'#'} onClick={handleRecover} color='textSecondary'>
+            Click here to recover an incomplete transaction
+        </Link>
+        </Typography>
       </PaperContent>
+      <BridgeModal
+        open={recoverOpened}
+        title="Recovery"
+        onClose={handleRecoverClose}
+      >
+      <PaperContent bottomPadding>
+        test
+      </PaperContent>
+      </BridgeModal>
     </>
   );
 };

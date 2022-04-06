@@ -1,4 +1,5 @@
 import { TypographyOptions } from "@material-ui/core/styles/createTypography";
+import { grayDark } from "./colors";
 
 export const typography: TypographyOptions = {
   // fontSize: 12,
@@ -18,6 +19,7 @@ export const typography: TypographyOptions = {
     lineHeight: 1.4,
   },
   subtitle2: {
-    fontSize: 13,
+    fontSize: 11,
+    color: grayDark,
   },
 };

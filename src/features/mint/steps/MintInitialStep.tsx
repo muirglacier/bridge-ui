@@ -1,9 +1,11 @@
-import { Divider } from '@material-ui/core'
-import React, { FunctionComponent, useCallback } from 'react'
+import { DialogContent, Divider, Typography } from '@material-ui/core'
+import React, { FunctionComponent, useCallback, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { Link } from '../../../components/links/Links'
 import {
   ActionButton,
   ActionButtonWrapper,
+  ActionButtonWrapperGapped,
 } from '../../../components/buttons/Buttons'
 import {
   AssetDropdown,
@@ -15,7 +17,7 @@ import {
   BigCurrencyInputWrapper,
 } from '../../../components/inputs/BigCurrencyInput'
 import { PaperContent } from '../../../components/layout/Paper'
-import { CenteredProgress } from '../../../components/progress/ProgressHelpers'
+import { CenteredProgress, ProgressWithContent, ProgressWrapper } from '../../../components/progress/ProgressHelpers'
 import { TooltipWithIcon } from '../../../components/tooltips/TooltipWithIcon'
 import { AssetInfo } from '../../../components/typography/TypographyHelpers'
 import {
@@ -42,6 +44,11 @@ import {
   $mint,
   setMintCurrency,
 } from '../mintSlice'
+import { WalletPickerProps } from '@renproject/multiwallet-ui'
+import { BridgeModal, BridgeModalTitle } from '../../../components/modals/BridgeModal'
+import { DebugComponentProps } from '../../../components/utils/Debug'
+
+
 
 export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -51,6 +58,15 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   const { currency } = useSelector($mint);
   const { chain } = useSelector($wallet);
   const { walletConnected } = useSelectedChainWallet();
+
+  const [recoverOpened, setRecoverOpened] = useState(false);
+  const handleRecover = useCallback((e) => {
+    setRecoverOpened(true);
+    e.preventDefault();
+  }, []);
+  const handleRecoverClose = useCallback(() => {
+    setRecoverOpened(false);
+  }, []);
  
 
   const handleCurrencyChange = useCallback(
@@ -117,7 +133,29 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
             {walletConnected ? "Next" : "Connect Wallet"}
           </ActionButton>
         </ActionButtonWrapper>
+        <Typography
+          variant="subtitle2"
+          align="center"
+          color="textSecondary"
+          gutterBottom
+        >
+        <Link href={'#'} onClick={handleRecover} color='textSecondary'>
+            Click here to recover an incomplete transaction
+        </Link>
+        </Typography>
       </PaperContent>
+      <BridgeModal
+        open={recoverOpened}
+        title="Recovery"
+        onClose={handleRecoverClose}
+      >
+      <DialogContent>
+          <Typography variant="body1" align="center" gutterBottom>
+            Limited wallet support
+          </Typography>
+      </DialogContent>
+      </BridgeModal>
+      
     </>
   );
 };
