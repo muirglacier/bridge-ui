@@ -118,7 +118,7 @@ export const MintProcessStep: FunctionComponent<RouteComponentProps> = ({
   }
 
   const [rdtx, setRdtx] = useLocalStorage('rdDict', rdDict)
-
+  const {getSignatures} = useRedeem()
   
   const { walletConnected } = useSelectedChainWallet();
   const { tx: parsedTx, txState } = useTxParam();

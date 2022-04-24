@@ -1,4 +1,6 @@
-import { Divider, Fade, Typography } from "@material-ui/core";
+import { Divider,   DialogActions,
+  Fade, Typography, Box,
+  Button, } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -205,9 +207,9 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
           color="textSecondary"
           gutterBottom
         >
-        <Link href={'#'} onClick={handleRecover} color='textSecondary'>
+        {walletConnected ? <Link href={'#'} onClick={handleRecover} color='textSecondary'>
             Click here to recover an incomplete transaction
-        </Link>
+        </Link> : ""}
         </Typography>
       </PaperContent>
       <BridgeModal

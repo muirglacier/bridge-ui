@@ -71,6 +71,7 @@ export type TxConfigurationStepProps = {
   onNext?: () => void;
 };
 
+
 export type LocationTxState = {
   txState?: {
     newTx?: boolean;
