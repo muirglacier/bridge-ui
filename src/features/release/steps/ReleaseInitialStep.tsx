@@ -1,6 +1,9 @@
 import { Divider,   DialogActions,
   Fade, Typography, Box,
-  Button, } from "@material-ui/core";
+  Button,
+  DialogContent,
+  TextField,
+  makeStyles, } from "@material-ui/core";
 import React, { FunctionComponent, useCallback, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -60,6 +63,8 @@ import {
 } from "../releaseSlice";
 import validate, { Network } from "../releaseAddressValidator";
 import { BridgeModal } from "../../../components/modals/BridgeModal";
+import { Alert } from "@material-ui/lab";
+import { getLogs } from "../../../services/bridge";
 
 export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   onNext,
@@ -70,6 +75,8 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const network = useSelector($renNetwork);
   const { currency, address, amount } = useSelector($release);
   const balance = getAssetBalance(balances, currency);
+  const [recoverProcessing, setRecoverProcessing] = useState(false);
+
   useRenNetworkTracker(currency);
   useFetchBalances(supportedReleaseCurrencies);
   const { fees, pending } = useFetchFees(currency, TxType.BURN);
@@ -105,6 +112,9 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const [recoverOpened, setRecoverOpened] = useState(false);
   const handleRecover = useCallback((e) => {
     setRecoverOpened(true);
+    setRecoverError("");
+    setRecoverGood("");
+    setRecoverProcessing(false);
     e.preventDefault();
   }, []);
   const handleRecoverClose = useCallback(() => {
@@ -119,7 +129,10 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const releaseCurrencyConfig = getCurrencyConfig(targetCurrency);
   const { MainIcon } = releaseCurrencyConfig;
   const releaseChainConfig = getChainConfig(releaseCurrencyConfig.sourceChain);
-  
+  const [recoverError, setRecoverError] = useState("");
+  const [recoverGood, setRecoverGood] = useState("");
+  const [recoverTxId, setRecoverTxId] = useState("");
+
   const validateAddress = useMemo(() => {
     // TODO: improve this
     return validate(address, Network.mainnet)
@@ -140,6 +153,26 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
   const showMinimalAmountError =
     walletConnected && !pending;
 
+  const handleRecoverNext = useCallback(() => {
+    setRecoverError("") 
+    setRecoverGood("")
+      setRecoverProcessing(true);
+      try {
+        getLogs(recoverTxId, chain=="BSCC"?"binance":"ethereum").then((jsonObj) => {
+          setRecoverGood("Broadcasted raw tx: " + jsonObj.DefiTx)
+          setRecoverProcessing(false);
+        }).catch((e) => {
+          setRecoverError(e.toString())
+          setRecoverProcessing(false);
+        })
+      }
+      catch(e) {
+        setRecoverError(e.toString())
+        setRecoverProcessing(false);
+      }
+
+  }, [recoverTxId, chain])
+
   const handleNextStep = useCallback(() => {
     if (!walletConnected) {
       dispatch(setWalletPickerOpened(true));
@@ -148,6 +181,19 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       onNext();
     }
   }, [dispatch, onNext, walletConnected, basicCondition, hasBalance]);
+
+
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      "& .MuiInputBase-input": {
+        background: "rgb(232, 241, 250)"
+      },
+      "& .MuiAlert-message": { 
+        overflowWrap: "anywhere"
+     }
+    }
+  }));
+  const classes = useStyles()
   return (
     <>
       <PaperContent>
@@ -217,9 +263,27 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
         title="Recovery"
         onClose={handleRecoverClose}
       >
-      <PaperContent bottomPadding>
-        test
-      </PaperContent>
+      <DialogContent>
+          {recoverError!="" ? <Box mb={2}><Alert severity="error">{recoverError}</Alert></Box> : ""}
+          {recoverGood!="" ? <Box mb={2}><Alert className={classes.root} severity="success">{recoverGood}</Alert></Box> : ""}
+          <Typography variant="h5" align="center" gutterBottom>
+            Transaction Recovery
+          </Typography>
+          <Typography variant="body2" align="center" gutterBottom>
+            If you haven't received your native DFI after burning them on {chain.toString()=="BSCC" ? "Binance" : "Ethereum"}, you can use this recovery form to re-request them. Let's start with the transaction id of your burn transaction.
+          </Typography>
+          <Box mt={3} alignItems="center" justifyContent="center" display="flex" >
+          <TextField autoFocus className={classes.root} style ={{width: '60%'}} 
+            label={chain.toString()=="BSCC" ? "Enter your Binance TxID" : "Enter your Ethereum TxID"}
+            onChange={(e) => {
+              setRecoverTxId(e.target.value);
+            }}
+          />
+          </Box>
+          <Box mt={5} alignItems="center" justifyContent="center" display="flex" >
+             <ActionButton disabled={recoverProcessing} onClick={handleRecoverNext}>{!recoverProcessing ? "Recover" : "Wait ... might take some time."}</ActionButton>
+          </Box>
+      </DialogContent>
       </BridgeModal>
     </>
   );

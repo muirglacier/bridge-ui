@@ -137,7 +137,8 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   },[account, chain, recoverTxId, signatures, nnn])
 
   const handleRecoverNext = useCallback(async () => {
-    setRecoverError("")
+    setRecoverError("") 
+    setRecoverGood("")
       setRecoverProcessing(true);
       try {
         console.log("recover on chain:", chain.toString()=="BSCC" ? "binance" : "ethereum")
