@@ -38,6 +38,7 @@ import {
   setTxHistoryOpened,
 } from "../features/transactions/transactionsSlice";
 import { useSubNetworkName } from "../features/ui/uiHooks";
+
 import {
   useAuthentication,
   useSelectedChainWallet,
@@ -45,6 +46,8 @@ import {
   useWallet,
   useWeb3Signatures,
 } from "../features/wallet/walletHooks";
+import { copyToClipboard } from "../utils/copyToClipboard";
+
 import {
   $authRequired,
   $multiwalletChain,
@@ -186,10 +189,30 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
 
   const drawerId = "main-menu-mobile";
   const showTxIndicator = walletConnected && txsNeedsAction;
+  const [copied, setCopied] = useState(false);
+  const handleClick = useCallback(() => {
+    if (!copied) {
+      copyToClipboard("0x361C60b7c2828fCAb80988d00D1D542c83387b50");
+      setCopied(true);
+      setTimeout(() => {
+        setCopied(false);
+      }, 2000);
+    }
+  }, [copied]);
+
+  const handleClick2 = useCallback(() => {
+    
+  }, []);
 
   const ToolbarMenu = (
     <>
       <div className={styles.desktopMenu}>
+        <Button variant="outlined" onClick={()=> window.open("https://bscscan.com/address/0x3961a7B7d2CeB33ad5740624901f6264023C9aC0#code", "_blank")} color="secondary" className={styles.rightMargin}>
+          <span>{"Smart Contract"}</span>
+        </Button>
+        <Button variant="outlined" onClick={handleClick} color="secondary" className={styles.rightMargin}>
+          <span>{!copied ? "BSC-DFI Token Address" : "Copied to Clipboard"}</span>
+        </Button>
         <WalletConnectionStatusButton
           onClick={handleWalletButtonClick}
           hoisted={txHistoryOpened}

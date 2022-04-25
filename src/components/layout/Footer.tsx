@@ -97,7 +97,6 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
     <footer className={rootClassName}>
       <Box alignItems="center" justifyContent="center" display="flex" >
       <Typography variant="subtitle2" color="textPrimary" align="center" gutterBottom>
-Do not forget to add token&nbsp;&nbsp;<a href="https://bscscan.com/token/0xfC1a129325Efd34b81CE9769A9f620E2aA6551c6" target="_blank">0xfC1a129325Efd34b81CE9769A9f620E2aA6551c6</a>&nbsp;&nbsp;to your MetaMask wallet / assets
 </Typography>
 </Box>
 

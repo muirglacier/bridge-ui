@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { HomeMenuIconButton } from "../buttons/Buttons";
 import { BetaIcon, RenBridgeLogoIcon, BridgeLogoIcon } from "../icons/RenIcons";
 import { Footer } from "./Footer";
+import { defaultShadow } from "../../theme/other";
 
 const headerHeight = 112;
 const footerHeight = 80;
@@ -34,6 +35,16 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
     display: "none",
     [theme.breakpoints.up("sm")]: {
       display: "flex",
+    },
+  },
+  rightMargin: {
+    marginRight: 20,
+    backgroundColor: theme.palette.common.white,
+    borderColor: theme.palette.divider,
+    boxShadow: defaultShadow,
+    "&:hover": {
+      borderColor: theme.palette.divider,
+      backgroundColor: theme.palette.divider,
     },
   },
   desktopTxHistory: {
