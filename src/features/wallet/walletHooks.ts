@@ -590,7 +590,7 @@ const addTokenHook = (web3: Web3, chain: RenChain) => {
             type: 'ERC20',
             options: {
               address: chain=="ethereum" ? SS.ETH_TOKEN_ADDRESS : SS.BSC_TOKEN_ADDRESS,
-              symbol: 'brDFI',
+              symbol: 'DFI',
               decimals: 18,
               image: 'https://cryptologos.cc/logos/defichain-dfi-logo.svg?v=018',
             },
