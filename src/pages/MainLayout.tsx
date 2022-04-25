@@ -248,20 +248,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
           wallet={symbol}
         />
       </ListItem>
-      <ListItem
-        divider
-        className={styles.drawerListItem}
-        button
-        onClick={handleTxHistoryToggle}
-      >
-        <Button className={styles.mobileMenuButton} component="div">
-          <TransactionHistoryMenuIconButton
-            className={styles.mobileTxHistory}
-            indicator={showTxIndicator}
-          />
-          <span>View Transactions</span>
-        </Button>
-      </ListItem>
+
       <ListItem
         className={classNames(
           styles.drawerListItem,
@@ -304,7 +291,6 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
       Logo={WalletLogo}
     >
       {children}
-      <TransactionHistory />
       <Debug
         it={{
           isAuthenticated,

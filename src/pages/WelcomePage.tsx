@@ -130,10 +130,8 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
         <Typography variant="body1" className={styles.description}>
           Defichain-Bridge is an easy and non-custodial peer-to-peer system that allows for using native Defichain Assets on other blockchains.
         </Typography>
-        <Typography variant="body1" className={styles.description}>
-        <Alert severity="error">Warning! Defichain Bridge is currently in the beta testing phase. Things are expected to break. If you want to participate in the hunt for bugs, check out our bug bounty program. In the meantime, do not send more funds to the bridge than you can afford to lose.</Alert>
-        </Typography>
-
+        
+        
         <Typography variant="body1" className={styles.continuation}>
           To continue, read and agree to the{" "}
           <Link
@@ -146,8 +144,8 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
           </Link>
         </Typography>
         <NarrowCenteredWrapper>
-          <ActionButton  className={styles.button} onClick={handleAgree}>
-            Agree & Continue
+          <ActionButton  className={styles.button} disabled={true} onClick={handleAgree}>
+            MAINTENANCE MODE
           </ActionButton>
           <ActionButton className={styles.button} onClick={handleBugbounty} color="secondary">
             Bug Bounty Program

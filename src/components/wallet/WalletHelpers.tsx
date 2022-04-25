@@ -381,6 +381,7 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
         classes,
       };
   return (
+    <>
     <Button className={resolvedClassName} {...buttonProps} {...rest}>
       <WalletConnectionIndicator
         status={status}
@@ -391,6 +392,7 @@ export const WalletConnectionStatusButton: FunctionComponent<WalletConnectionSta
         <span className={accountClassName}>{trimmedAddress}</span>
       )}
     </Button>
+    </>
   );
 };
 

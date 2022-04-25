@@ -113,31 +113,31 @@ const ABI = [
       {
         "indexed": false,
         "internalType": "address",
-        "name": "_from",
+        "name": "From",
         "type": "address"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "string",
-        "name": "_to",
+        "name": "To",
         "type": "string"
       },
       {
         "indexed": false,
         "internalType": "string",
-        "name": "bridge",
+        "name": "Bridge",
         "type": "string"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_value",
+        "name": "Value",
         "type": "uint256"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
-        "name": "extradata",
+        "name": "Extradata",
         "type": "uint256"
       }
     ],
@@ -270,9 +270,9 @@ const ABI = [
         "type": "address"
       },
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "txid",
-        "type": "string"
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -310,9 +310,9 @@ const ABI = [
         "type": "address"
       },
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "txid",
-        "type": "string"
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -379,9 +379,9 @@ const ABI = [
         "type": "address"
       },
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "txid",
-        "type": "string"
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -434,9 +434,9 @@ const ABI = [
         "type": "address"
       },
       {
-        "internalType": "string",
+        "internalType": "uint256",
         "name": "txid",
-        "type": "string"
+        "type": "uint256"
       },
       {
         "internalType": "uint256",
@@ -539,6 +539,24 @@ const ABI = [
     "stateMutability": "pure",
     "type": "function",
     "constant": true
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "txid",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "n",
+        "type": "uint256"
+      }
+    ],
+    "name": "manuallySpend",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ];
 

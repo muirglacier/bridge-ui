@@ -120,7 +120,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
         />
       )}
       {!hideButton && (
-      <ActionButtonWrapperGapped>
+      /*<ActionButtonWrapperGapped>
           <ActionButton
             variant="contained"
             color="secondary"
@@ -128,7 +128,7 @@ export const TransactionFees: FunctionComponent<TransactionFeesProps> = ({
           >
             Add DFI Token To Metamask
           </ActionButton>
-        </ActionButtonWrapperGapped>
+        </ActionButtonWrapperGapped>*/<></>
         )}
     </>
   );

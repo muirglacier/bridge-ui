@@ -1,4 +1,4 @@
-import { LinkProps, Typography } from "@material-ui/core";
+import { Box, LinkProps, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import GitHubIcon from "@material-ui/icons/GitHub";
 import RedditIcon from "@material-ui/icons/Reddit";
@@ -16,7 +16,7 @@ const FooterTextLink: FunctionComponent<CustomLinkProps> = (props) => (
 
 const useFooterIconLinkStyles = makeStyles(() => ({
   root: {
-    fontSize: 18,
+    fontSize: 13,
   },
 }));
 
@@ -37,9 +37,10 @@ const useStyles = makeStyles((theme) => ({
     display: "none",
     [theme.breakpoints.up("sm")]: {
       display: "flex",
-      justifyContent: "space-between",
+      justifyContent: "center",
       paddingTop: 20,
       paddingBottom: 10,
+
     },
   },
   rootMobile: {
@@ -94,7 +95,13 @@ export const Footer: FunctionComponent<FooterProps> = ({ mobile }) => {
   });
   return (
     <footer className={rootClassName}>
+      <Box alignItems="center" justifyContent="center" display="flex" >
+      <Typography variant="subtitle2" color="textPrimary" align="center" gutterBottom>
+Do not forget to add token&nbsp;&nbsp;<a href="https://bscscan.com/token/0xfC1a129325Efd34b81CE9769A9f620E2aA6551c6" target="_blank">0xfC1a129325Efd34b81CE9769A9f620E2aA6551c6</a>&nbsp;&nbsp;to your MetaMask wallet / assets
+</Typography>
+</Box>
 
     </footer>
+    
   );
 };

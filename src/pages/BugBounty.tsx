@@ -129,9 +129,8 @@ export const BugBounty: FunctionComponent<RouteComponentProps> = ({
           Defichain-Bridge Bug Bounty Program
         </Typography>
         <Typography variant="body1" gutterBottom={true} className={styles.description}>
-        This software is currently in Beta stage, so little bugs here and there are expected. You are invited to play around with our software (both frontend and backend) and try to break it. If you find a bug and provide steps to reproduce it, you are eligible to receive up to 1500 USD in DFI per bug.
+        You are invited to play around with our software (both frontend and backend) and try to break it. If you find a bug and provide steps to reproduce it, you are eligible to receive up to 1500 USD in DFI per bug.
         </Typography>
-         <Alert className={styles.gaptop} severity="error">Warning! All bug bounty payouts are at the sole discretion of the Defichain Bridge team, there is no legal entitlement. Every bug, even if reported multiple times, will only have the first reporter rewarded. All bugs have to be posted to the <Link href="https://github.com/muirglacier/bridge-ui/issues">Github Issue Bugtracker</Link>. The bug bounty program will be closed on the 26th of March 2022 23:59:59 UTC, and will be relaunched at a later point.</Alert>
         <TableContainer component={Paper} className={styles.gaptop}>
      <Table aria-label="simple table" stickyHeader>
        <TableHead>
@@ -155,15 +154,9 @@ export const BugBounty: FunctionComponent<RouteComponentProps> = ({
            </TableRow>
            <TableRow>
              <TableCell component="th" scope="row">
-               Users funds are lost (no payout)
+               Users funds are lost (no payout and not recoverable)
              </TableCell>
              <TableCell align="right">300 USD</TableCell>
-           </TableRow>
-           <TableRow>
-             <TableCell component="th" scope="row">
-               Other bugs (UI bugs, usability issues, etc.)
-             </TableCell>
-             <TableCell align="right">150 USD</TableCell>
            </TableRow>
        </TableBody>
      </Table>
