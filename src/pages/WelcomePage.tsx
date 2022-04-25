@@ -144,8 +144,8 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
           </Link>
         </Typography>
         <NarrowCenteredWrapper>
-          <ActionButton  className={styles.button} disabled={true} onClick={handleAgree}>
-            MAINTENANCE MODE
+          <ActionButton  className={styles.button} onClick={handleAgree}>
+            Agree & Continue
           </ActionButton>
           <ActionButton className={styles.button} onClick={handleBugbounty} color="secondary">
             Bug Bounty Program
