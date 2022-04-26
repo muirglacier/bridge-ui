@@ -38,7 +38,7 @@ export const useMobileLayoutStyles = makeStyles((theme: Theme) => ({
     },
   },
   rightMargin: {
-    marginRight: 20,
+    marginRight: 10,
     backgroundColor: theme.palette.common.white,
     borderColor: theme.palette.divider,
     boxShadow: defaultShadow,

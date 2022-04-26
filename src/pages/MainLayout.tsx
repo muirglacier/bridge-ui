@@ -207,11 +207,14 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const ToolbarMenu = (
     <>
       <div className={styles.desktopMenu}>
+      <Button variant="outlined" onClick={()=> window.open("https://bscscan.com/address/0x3961a7B7d2CeB33ad5740624901f6264023C9aC0#code", "_blank")} color="secondary" className={styles.rightMargin}>
+          <span>{"Pancake Swap"}</span>
+        </Button>
         <Button variant="outlined" onClick={()=> window.open("https://bscscan.com/address/0x3961a7B7d2CeB33ad5740624901f6264023C9aC0#code", "_blank")} color="secondary" className={styles.rightMargin}>
           <span>{"Smart Contract"}</span>
         </Button>
         <Button variant="outlined" onClick={handleClick} color="secondary" className={styles.rightMargin}>
-          <span>{!copied ? "BSC-DFI Token Address" : "Copied to Clipboard"}</span>
+          <span>{!copied ? "DFI Token Address" : "Copied to Clipboard"}</span>
         </Button>
         <WalletConnectionStatusButton
           onClick={handleWalletButtonClick}

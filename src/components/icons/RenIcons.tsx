@@ -122,6 +122,10 @@ export const BridgeLogoIcon: CustomSvgIconComponent = (props) => {
   return<SvgIcon fill="black" component={BridgeLogo} {...scalingProps} {...props}/>
 };
 
+export const BridgeLogoIconBig: CustomSvgIconComponent = (props) => {
+  const scalingProps = getScalingPropsFactored(821, 459, 5.2);
+  return<SvgIcon fill="black" component={BridgeLogo} {...scalingProps} {...props}/>
+};
 
 export const QrCodeIcon: CustomSvgIconComponent = (props) => (
   <SvgIcon component={QrCode} {...props} />

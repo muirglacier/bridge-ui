@@ -16,7 +16,7 @@ import {
   WarningIcon,
   ZecFullIcon,
 } from "../components/icons/RenIcons";
-import { BridgeLogoIcon } from "../components/icons/RenIcons";
+import { BridgeLogoIconBig } from "../components/icons/RenIcons";
 import { NarrowCenteredWrapper } from "../components/layout/LayoutHelpers";
 import { MobileLayoutNoHeader } from "../components/layout/MobileLayout";
 import { Link } from "../components/links/Links";
@@ -123,12 +123,12 @@ export const WelcomePage: FunctionComponent<RouteComponentProps> = ({
     <MobileLayoutNoHeader withBackground>
       
       <Container maxWidth="sm">
-        <Typography variant="h1" className={styles.heading}>
-          <BridgeLogoIcon width="auto" height="auto"/>
-          <Box className={styles.description}>Easily Move Token Between Defichain and X</Box>
+        <Typography variant="h5" className={styles.heading}>
+          <BridgeLogoIconBig width="auto" height="auto"/>
+          <Box className={styles.description}><b>Cross-Chain Protocol for Defichain Assets</b></Box>
         </Typography>
-        <Typography variant="body1" className={styles.description}>
-          Defichain-Bridge is an easy and non-custodial peer-to-peer system that allows for using native Defichain Assets on other blockchains.
+        <Typography variant="body2" className={styles.description}>
+          Defichain-Bridge is an easy and non-custodial peer-to-peer system that allows for using native Defichain assets on other blockchains. Cryptographic primitives such as "multiparty threshold ECDSA" ensure that no central entity has control over the locked funds or the minting process on the other blockchains.
         </Typography>
         
         

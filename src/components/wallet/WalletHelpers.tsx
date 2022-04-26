@@ -206,7 +206,7 @@ export const WalletWrongNetworkInfo: WalletPickerProps<
   const subNetworkName = useSubNetworkName();
   const chainName = getChainConfigByRentxName(chain).full;
   const networkName = getNetworkConfigByRentxName(targetNetwork).full;
-  const {updateBsc} = useAddBsc("Binance Chain");
+  const {updateBsc} = useAddBsc("BSC");
   const {updateBsc : updateEth} = useAddBsc("Ethereum");
   const AddBscMetamask = async() => {
     if (chainName=="Ethereum") {
@@ -423,7 +423,7 @@ export const BinanceConnectorInfo: WalletPickerProps<
       />
       <SpacedPaperContent topPadding bottomPadding>
         <Typography variant="h5" align="center" gutterBottom>
-          Binance Chain Wallet
+          BSC Wallet
         </Typography>
         <Typography
           variant="body1"
