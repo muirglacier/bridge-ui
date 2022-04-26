@@ -52,7 +52,7 @@ import {
   ProcessingTimeWrapper,
   SubmitErrorDialog,
 } from "../../transactions/components/TransactionsHelpers";
-import { getPaymentLink, TxType } from "../../transactions/transactionsUtils";
+import { getPaymentLink, txExpirySorter, TxType } from "../../transactions/transactionsUtils";
 import { resetMint } from "../mintSlice";
 import { getLockAndMintParams, getRemainingGatewayTime } from "../mintUtils";
 import { AddressValidityMessage } from "./MintHelpers";
@@ -134,12 +134,11 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
     lockProcessingTime,
   } = getLockAndMintParams(tx, depositHash);
 
-
   const dep: DepositEntry = tx.transactions[depositHash]
   lockTxHash = depositHash
   lockTxLink = "https://defiscan.live/transactions/" + depositHash.split(":")[0]
   lockConfirmations = dep?.confirmations || 0
-
+  const vout = dep?.vout?.value || "???"
   const { MainIcon } = lockChainConfig;
   lockTargetConfirmations = lockChainConfig?.targetConfirmations || 0
 
@@ -160,6 +159,9 @@ export const MintDepositConfirmationStatus: FunctionComponent<MintDepositConfirm
         </ProgressWithContent>
       </ProgressWrapper>
       <SmallWrapper>
+        <Typography variant="h5" align="center">
+          <b>Received {vout} DFI</b>
+        </Typography>
         <Typography variant="body1" align="center">
           {lockConfirmations} of {lockTargetConfirmations} confirmations
         </Typography>
@@ -225,7 +227,7 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
   lockTxHash = depositHash
   lockTxLink = "https://defiscan.live/transactions/" + depositHash.split(":")[0]
   lockConfirmations = dep?.confirmations || 0
-
+  const vout = dep?.vout?.value || "???"
   lockTargetConfirmations = lockChainConfig?.targetConfirmations || 0
 
   const notificationMessage = `${lockConfirmations>lockTargetConfirmations?lockTargetConfirmations:lockConfirmations}/${lockTargetConfirmations} confirmations, ready to submit ${
@@ -257,6 +259,9 @@ export const MintDepositAcceptedStatus: FunctionComponent<MintDepositAcceptedSta
           </ProgressWithContent>
         )}
       </ProgressWrapper>
+      <Typography variant="h5" align="center">
+          <b>Received {vout} DFI</b>
+        </Typography>
       <Typography variant="body1" align="center" gutterBottom>
         <NumberFormatText
           value={lockTxAmount}
