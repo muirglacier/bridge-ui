@@ -207,7 +207,7 @@ export const MainLayout: FunctionComponent<MainLayoutVariantProps> = ({
   const ToolbarMenu = (
     <>
       <div className={styles.desktopMenu}>
-      <Button variant="outlined" onClick={()=> window.open("https://bscscan.com/address/0x3961a7B7d2CeB33ad5740624901f6264023C9aC0#code", "_blank")} color="secondary" className={styles.rightMargin}>
+      <Button variant="outlined" onClick={()=> window.open("https://pancakeswap.finance/swap?inputCurrency=0x361c60b7c2828fcab80988d00d1d542c83387b50&outputCurrency=BNB", "_blank")} color="secondary" className={styles.rightMargin}>
           <span>{"Pancake Swap"}</span>
         </Button>
         <Button variant="outlined" onClick={()=> window.open("https://bscscan.com/address/0x3961a7B7d2CeB33ad5740624901f6264023C9aC0#code", "_blank")} color="secondary" className={styles.rightMargin}>
