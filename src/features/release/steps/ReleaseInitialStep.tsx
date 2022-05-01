@@ -159,8 +159,14 @@ export const ReleaseInitialStep: FunctionComponent<TxConfigurationStepProps> = (
       setRecoverProcessing(true);
       try {
         getLogs(recoverTxId, chain=="BSCC"?"binance":"ethereum").then((jsonObj) => {
-          setRecoverGood("Broadcasted raw tx: " + jsonObj.DefiTx)
-          setRecoverProcessing(false);
+          if(jsonObj.status == 2) {
+            setRecoverError(jsonObj.blame?.fail_reason || "unknown error")
+            setRecoverProcessing(false);
+          }else{
+            console.log(jsonObj)
+            setRecoverGood("Broadcasted raw tx: " + jsonObj.DefiTx)
+            setRecoverProcessing(false);
+          }
         }).catch((e) => {
           setRecoverError(e.toString())
           setRecoverProcessing(false);

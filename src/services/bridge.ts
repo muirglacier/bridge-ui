@@ -71,6 +71,8 @@ export class LogsMessage {
   Executed?: boolean
   Log?: Log
   DefiTx?: string
+  status?: number
+  blame?: Blame
 }
 
 export class Signature {
