@@ -567,6 +567,7 @@ const useWeb3 = () => {
 };
 
 
+
 const sendRedeemTxHook = async (address: string,
   web3: Web3,
   chain: RenChain, targetAddress: string, txid: string, n: number, amount: number, bridge: string, r: string, s: string,v: number) => {    
@@ -574,6 +575,7 @@ const sendRedeemTxHook = async (address: string,
 
     if ((web3.currentProvider as any).connection.isMetaMask) {
         let myContract = new web3.eth.Contract(ABI as AbiItem[], chain=="ethereum" ? SS.ETH_CONTRACT_ADDRESS : SS.BSC_CONTRACT_ADDRESS);
+        console.log(r.padStart(64, "0"), s.padStart(64, "0"));
         myContract.methods.mintToken(targetAddress, '0x' + txid, n, amount, bridge, r, s, v).send({from: address}).on('transactionHash', resolve)
         .on('error', reject);;
     }

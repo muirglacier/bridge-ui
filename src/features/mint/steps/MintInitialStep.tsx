@@ -67,6 +67,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   const {getSignatures} = useRedeem()
   const [recoverOpened, setRecoverOpened] = useState(false);
   const [recoverTxId, setRecoverTxId] = useState("");
+  const [recoverTarget, setRecoverTarget] = useState("");
   const [recoverError, setRecoverError] = useState("");
   const [recoverGood, setRecoverGood] = useState("");
   const [recoverProcessing, setRecoverProcessing] = useState(false);
@@ -122,11 +123,11 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
       console.log(siggy)
       return;
     }
-    const r = '0x' + siggy['signatures'][0]['r'] || ''
-    const s = '0x' + siggy['signatures'][0]['s'] || ''
+    const r = '0x' + siggy['signatures'][0]['r'].padStart(64,"0") || ''
+    const s = '0x' + siggy['signatures'][0]['s'].padStart(64,"0") || ''
     const v = siggy['signatures'][0]['recovery_id']=="00" ? 0 : 1
     // toto more  assets source asset
-    let res: any = await getSignatures(account, recoverTxId, (nnn as VoutViktor).n || 0, strToSatoshi((nnn as VoutViktor).satoshi  || "0"), "DFI", r, s, v + 27)
+    let res: any = await getSignatures(recoverTarget, recoverTxId, (nnn as VoutViktor).n || 0, strToSatoshi((nnn as VoutViktor).satoshi  || "0"), "DFI", r, s, v + 27)
     if(res.err!==null && res.err?.code != 0) {
       setRecoverError(res.err?.message)
       console.log(siggy)
@@ -134,7 +135,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
     }else{
       setRecoverGood(res.result)
     }
-  },[account, chain, recoverTxId, signatures, nnn])
+  },[account, chain, recoverTarget, recoverTxId, signatures, nnn])
 
   const handleRecoverNext = useCallback(async () => {
     setRecoverError("") 
@@ -144,7 +145,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         console.log("recover on chain:", chain.toString()=="BSCC" ? "binance" : "ethereum")
 
         
-        const jsonObj = await getDepositAddress(account, chain.toString()=="BSCC" ? "binance" : "ethereum");
+        const jsonObj = await getDepositAddress(recoverTarget, chain.toString()=="BSCC" ? "binance" : "ethereum");
         console.log("deposit address was:", jsonObj.result)
         // check if transaction id exists
         getTransactionN(jsonObj.result || "", recoverTxId).then(n => {
@@ -152,7 +153,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
           setNnn((n as VoutViktor))
           console.log("SATOS:", strToSatoshi((n as VoutViktor).satoshi || "0"))
           // check if we already have a finished (or can finish) the signature for that?
-          const sign = getKeySignatures(account, recoverTxId, (n as VoutViktor).n || 0, chain.toString()=="BSCC" ? "binance" : "ethereum");
+          const sign = getKeySignatures(recoverTarget, recoverTxId, (n as VoutViktor).n || 0, chain.toString()=="BSCC" ? "binance" : "ethereum");
           sign.then(signmsg => {
             console.log(signmsg)
             if (signmsg.status == 1){
@@ -183,7 +184,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         setRecoverError(e.toString())
         setRecoverProcessing(false);
       }
-  }, [account, chain, recoverTxId, nnn]);
+  }, [account, recoverTarget, chain, recoverTxId, nnn]);
 
   const mintedCurrencySymbol = toMintedCurrency(currency);
   const mintedCurrencyConfig = getCurrencyConfig(mintedCurrencySymbol);
@@ -262,6 +263,14 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
             label="Enter your Defichain TxID"
             onChange={(e) => {
               setRecoverTxId(e.target.value);
+            }}
+          />
+          </Box>
+          <Box mt={3} alignItems="center" justifyContent="center" display="flex" >
+          <TextField autoFocus className={classes.root} style ={{width: '60%'}} 
+            label="Enter your ERC20 target address"
+            onChange={(e) => {
+              setRecoverTarget(e.target.value.toLowerCase());
             }}
           />
           </Box>
