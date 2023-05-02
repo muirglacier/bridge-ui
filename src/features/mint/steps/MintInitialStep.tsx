@@ -84,7 +84,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   const handleRecoverClose = useCallback(() => {
     setRecoverOpened(false);
   }, []);
- 
+
 
   const handleCurrencyChange = useCallback(
     (event) => {
@@ -137,14 +137,15 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
     }
   },[account, chain, recoverTarget, recoverTxId, signatures, nnn])
 
+
   const handleRecoverNext = useCallback(async () => {
-    setRecoverError("") 
+    setRecoverError("")
     setRecoverGood("")
       setRecoverProcessing(true);
       try {
         console.log("recover on chain:", chain.toString()=="BSCC" ? "binance" : "ethereum")
 
-        
+
         const jsonObj = await getDepositAddress(recoverTarget, chain.toString()=="BSCC" ? "binance" : "ethereum");
         console.log("deposit address was:", jsonObj.result)
         // check if transaction id exists
@@ -199,7 +200,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
   }));
   const classes = useStyles()
 
-  
+
   return (
     <>
       <PaperContent bottomPadding>
@@ -223,7 +224,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
         </AssetDropdownWrapper>
       </PaperContent>
       <Divider />
-      <PaperContent darker topPadding bottomPadding>         
+      <PaperContent darker topPadding bottomPadding>
         <ActionButtonWrapper>
           <ActionButton
             onClick={handleNextStep}
@@ -259,7 +260,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
           </Typography>
           {signatures == null ? <>
           <Box mt={3} alignItems="center" justifyContent="center" display="flex" >
-          <TextField autoFocus className={classes.root} style ={{width: '60%'}} 
+          <TextField autoFocus className={classes.root} style ={{width: '60%'}}
             label="Enter your Defichain TxID"
             onChange={(e) => {
               setRecoverTxId(e.target.value);
@@ -267,7 +268,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
           />
           </Box>
           <Box mt={3} alignItems="center" justifyContent="center" display="flex" >
-          <TextField autoFocus className={classes.root} style ={{width: '60%'}} 
+          <TextField autoFocus className={classes.root} style ={{width: '60%'}}
             label="Enter your ERC20 target address"
             onChange={(e) => {
               setRecoverTarget(e.target.value.toLowerCase());
@@ -283,7 +284,7 @@ export const MintInitialStep: FunctionComponent<TxConfigurationStepProps> = ({
 
       </DialogContent>
       </BridgeModal>
-      
+
     </>
   );
 };

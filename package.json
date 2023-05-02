@@ -74,8 +74,8 @@
     "test": "react-scripts test",
     "lint": "eslint --ext js,ts,tsx src",
     "eject": "react-scripts eject",
-    "predeploy": "npm run build && cp CNAME build/CNAME",
-    "deploy": "gh-pages -d build -r git@github.com:muirglacier/bridge-production.git"
+    "predeploy": "npm run build; cp CNAME build/CNAME",
+    "deploy": "gh-pages -d build -r git@github.com:git@github.com:muirglacier/bridge-v1-production.git"
   },
   "jest": {
     "transformIgnorePatterns": [
